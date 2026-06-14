@@ -1,0 +1,27 @@
+---
+interface Props {
+  rating: string;
+}
+const { rating } = Astro.props;
+
+let bgColor = '#4b5563'; // gray for unknown
+let textColor = '#fff';
+
+if (rating === 'Native' || rating === 'Platinum') {
+  bgColor = '#10b981'; // green
+} else if (rating === 'Gold') {
+  bgColor = '#eab308'; // yellow
+  textColor = '#000';
+} else if (rating === 'Silver') {
+  bgColor = '#94a3b8'; // silver
+  textColor = '#000';
+} else if (rating === 'Bronze') {
+  bgColor = '#b45309'; // bronze
+} else if (rating === 'Garbage') {
+  bgColor = '#ef4444'; // red
+}
+---
+
+<span style={`background-color: ${bgColor}; color: ${textColor}; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; display: inline-block;`}>
+  {rating}
+</span>

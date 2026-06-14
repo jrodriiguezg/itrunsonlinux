@@ -1,0 +1,320 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../../db/schema';
+import { eq } from 'drizzle-orm';
+import { env } from 'cloudflare:workers';
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect('/');
+
+const db = drizzle(env.DB, { schema });
+
+const app = await db.select().from(schema.apps).where(eq(schema.apps.id, id)).get();
+if (!app) return Astro.redirect('/');
+
+const appReports = await db.select().from(schema.reports).where(eq(schema.reports.appId, id)).all();
+
+const isNativeApp = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native linux version');
+
+const canRunWithWine = appReports.some(
+  (r) => r.runner.toLowerCase() !== 'native' && r.rating.toLowerCase() !== 'garbage'
+);
+
+const isNative = isNativeApp || appReports.some(
+  (r) => r.runner.toLowerCase() === 'native' || r.rating.toLowerCase() === 'native'
+);
+
+const isGarbage = appReports.length > 0 && appReports.every(
+  (r) => r.rating.toLowerCase() === 'garbage'
+);
+
+const recommendedRunner = appReports.find(
+  (r) => r.runner.toLowerCase() !== 'native' && r.rating.toLowerCase() !== 'garbage'
+)?.runner;
+
+const alternativeNames = app.linuxAlternative && !isNativeApp
+  ? app.linuxAlternative.split(/\s*\/\s*/).map(name => name.trim()).filter(Boolean)
+  : [];
+
+const alternativeUrls: Record<string, string> = {
+  'gimp': 'https://www.gimp.org',
+  'krita': 'https://krita.org',
+  'inkscape': 'https://inkscape.org',
+  'scribus': 'https://www.scribus.net',
+  'davinci resolve': 'https://www.blackmagicdesign.com/products/davinciresolve',
+  'kdenlive': 'https://kdenlive.org',
+  'natron': 'https://natrongithub.github.io',
+  'blender': 'https://www.blender.org',
+  'darktable': 'https://www.darktable.org',
+  'rawtherapee': 'https://www.rawtherapee.com',
+  'freecad': 'https://www.freecad.org',
+  'bricscad': 'https://www.bricsys.com/en-intl/bricscad',
+  'onshape': 'https://www.onshape.com',
+  'libreoffice calc': 'https://www.libreoffice.org',
+  'onlyoffice': 'https://www.onlyoffice.com',
+  'libreoffice writer': 'https://www.libreoffice.org',
+  'libreoffice impress': 'https://www.libreoffice.org',
+  'libreoffice': 'https://www.libreoffice.org',
+  'thunderbird': 'https://www.thunderbird.net',
+  'evolution': 'https://wiki.gnome.org/Apps/Evolution',
+  'peazip': 'https://peazip.github.io',
+  'ark': 'https://apps.kde.org/ark',
+  'file roller': 'https://wiki.gnome.org/Apps/FileRoller',
+  'qbittorrent': 'https://www.qbittorrent.org',
+  'transmission': 'https://transmissionbt.com',
+  'rustdesk': 'https://rustdesk.com',
+  'anydesk': 'https://anydesk.com',
+  'notepadqq': 'https://notepadqq.com',
+  'vs code': 'https://code.visualstudio.com',
+  'vscodium': 'https://vscodium.com',
+  'pinta': 'https://www.pinta-project.com',
+  'bleachbit': 'https://www.bleachbit.org',
+  'ventoy': 'https://www.ventoy.net',
+  'balenaetcher': 'https://etcher.balena.io',
+  'cdemu': 'https://cdemu.sourceforge.io',
+  'obs studio': 'https://obsproject.com',
+  'simplescreenrecorder': 'https://www.maartenbaert.org/simplescreenrecorder',
+  'deadbeef': 'https://deadbeef.sourceforge.io',
+  'audacious': 'https://audacious-media-player.org',
+  'qmmp': 'https://qmmp.ylsoftware.com',
+  'bluefish': 'http://bluefish.openoffice.nl',
+  'lmms': 'https://lmms.io',
+  'bitwig studio': 'https://www.bitwig.com',
+  'reaper': 'https://www.reaper.fm',
+  'ardour': 'https://ardour.org',
+  'rhythmbox': 'https://wiki.gnome.org/Apps/Rhythmbox',
+  'strawberry': 'https://www.strawberrymusicplayer.org',
+  'filezilla': 'https://filezilla-project.org',
+  'krusader': 'https://krusader.org',
+  'native linux terminal': 'https://en.wikipedia.org/wiki/Terminal_emulator',
+  'heroic games launcher': 'https://heroicgameslauncher.com',
+  'lutris': 'https://lutris.net',
+};
+
+const getAppStreamId = (name: string): string | undefined => {
+  const cleanKey = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const mapping: Record<string, string> = {
+    gimp: 'org.gimp.GIMP',
+    krita: 'org.kde.krita',
+    inkscape: 'org.inkscape.Inkscape',
+    scribus: 'net.scribus.Scribus',
+    davinciresolve: 'com.blackmagicdesign.resolve',
+    kdenlive: 'org.kde.kdenlive',
+    natron: 'fr.natron.Natron',
+    blender: 'org.blender.Blender',
+    darktable: 'org.darktable.Darktable',
+    rawtherapee: 'com.rawtherapee.RawTherapee',
+    freecad: 'org.freecadweb.FreeCAD',
+    bricscad: 'com.bricsys.BricsCAD',
+    libreofficecalc: 'org.libreoffice.LibreOffice',
+    onlyoffice: 'org.onlyoffice.desktopeditors',
+    libreofficewriter: 'org.libreoffice.LibreOffice',
+    libreofficeimpress: 'org.libreoffice.LibreOffice',
+    libreoffice: 'org.libreoffice.LibreOffice',
+    thunderbird: 'org.mozilla.Thunderbird',
+    evolution: 'org.gnome.Evolution',
+    peazip: 'io.github.peazip.PeaZip',
+    ark: 'org.kde.ark',
+    fileroller: 'org.gnome.FileRoller',
+    qbittorrent: 'org.qbittorrent.qBittorrent',
+    transmission: 'com.transmissionbt.Transmission',
+    rustdesk: 'com.rustdesk.RustDesk',
+    anydesk: 'com.anydesk.AnyDesk',
+    notepadqq: 'com.notepadqq.Notepadqq',
+    vscode: 'com.visualstudio.code',
+    vscodium: 'com.vscodium.codium',
+    pinta: 'com.github.PintaProject.Pinta',
+    bleachbit: 'org.bleachbit.BleachBit',
+    ventoy: 'io.github.ventoy.Ventoy',
+    balenaetcher: 'io.balena.etcher',
+    obsstudio: 'com.obsproject.Studio',
+    deadbeef: 'io.github.DeaDBeeF-Player.DeaDBeeF',
+    audacious: 'org.atheme.audacious',
+    qmmp: 'org.qmmp.Qmmp',
+    bluefish: 'org.bluefish.Bluefish',
+    lmms: 'io.lmms.LMMS',
+    bitwigstudio: 'com.bitwig.BitwigStudio',
+    reaper: 'fm.reaper.Reaper',
+    ardour: 'org.ardour.Ardour',
+    rhythmbox: 'org.gnome.Rhythmbox',
+    strawberry: 'org.strawberrymusicplayer.strawberry',
+    filezilla: 'org.filezilla.Filezilla',
+    krusader: 'org.kde.krusader',
+    heroicgameslauncher: 'com.heroicgameslauncher.hgl',
+    lutris: 'net.lutris.Lutris',
+    bottles: 'use.bottles.bottles',
+    discord: 'com.discordapp.Discord',
+    spotify: 'com.spotify.Client',
+    steam: 'com.valvesoftware.Steam',
+    vlc: 'org.videolan.VLC',
+    vlcmediaplayer: 'org.videolan.VLC',
+    skype: 'com.skype.Client',
+    zoom: 'us.zoom.Zoom',
+    zoomworkplace: 'us.zoom.Zoom',
+    googlechrome: 'com.google.Chrome',
+    teamviewer: 'com.teamviewer.TeamViewer',
+    kate: 'org.kde.kate',
+    gedit: 'org.gnome.gedit',
+    mousepad: 'org.xfce.mousepad',
+    kolourpaint: 'org.kde.kolourpaint',
+    drawing: 'com.github.maoschanz.drawing',
+    spectacle: 'org.kde.spectacle',
+    gnomescreenshot: 'org.gnome.Screenshot',
+    gnomesystemmonitor: 'org.gnome.SystemMonitor',
+    kcalc: 'org.kde.kcalc',
+    gnomecalculator: 'org.gnome.Calculator',
+    abiword: 'org.abisource.AbiWord',
+    drawio: 'com.jgraph.drawio.desktop',
+    dia: 'org.gnome.Dia',
+    dbeaver: 'io.dbeaver.DBeaverCommunity'
+  };
+  return mapping[cleanKey];
+};
+---
+
+<Layout title={`${app.name} on Linux - ItRunsOnLinux`}>
+    <div style="margin-bottom: 2rem;">
+        <a href="/" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-decoration: none;">&larr; Back to home</a>
+    </div>
+
+    <div class="flat-card" style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color); font-weight: 800; letter-spacing: -0.5px;">{app.name}</h1>
+                <span style="font-size: 0.9rem; border: 1px solid var(--border-color); padding: 0.25rem 0.75rem; border-radius: 4px; color: var(--text-muted);">
+                    {app.category}
+                </span>
+            </div>
+            {app.homepage && (
+                <a href={app.homepage} target="_blank" class="btn" style="padding: 0.6rem 1.25rem;">
+                    Official Windows Page &rarr;
+                </a>
+            )}
+        </div>
+        <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 800px; margin-top: 1rem; line-height: 1.6;">
+            {app.description}
+        </p>
+    </div>
+
+    {isNative ? (
+        <div style="margin-bottom: 3rem;">
+            <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
+                Linux Support
+            </h2>
+            <div class="flat-card" style="padding: 1.5rem; border-left: 4px solid #10b981;">
+                <h3 style="color: #10b981; font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0;">Runs Natively</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                    Good news! <strong>{app.name}</strong> is natively supported on Linux. You do not need to run it through compatibility layers like Wine.
+                </p>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+                    {app.homepage && (
+                        <a href={app.homepage} target="_blank" class="btn" style="background-color: #10b981; border-color: #10b981; padding: 0.5rem 1.25rem;">
+                            Visit Official Website &rarr;
+                        </a>
+                    )}
+                    {getAppStreamId(app.name) && (
+                        <a href={`appstream://${getAppStreamId(app.name)}`} class="btn" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--accent-color); padding: 0.5rem 1.25rem; font-weight: 700; text-decoration: none;">
+                            Open in Software Store &rarr;
+                        </a>
+                    )}
+                </div>
+            </div>
+        </div>
+    ) : (
+        <>
+            <div style="margin-bottom: 3rem;">
+                <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
+                    Recommended Linux Alternatives
+                </h2>
+
+                {alternativeNames.length === 0 ? (
+                    <div style="text-align: center; padding: 3rem 2rem; background-color: var(--surface-color); border: 1px dashed var(--border-color); border-radius: 8px; color: var(--text-muted);">
+                        <p style="font-size: 1.05rem; margin: 0;">No specific Linux alternatives are listed for this application.</p>
+                    </div>
+                ) : (
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        {alternativeNames.map(name => {
+                            const url = alternativeUrls[name.toLowerCase()];
+                            const appStreamId = getAppStreamId(name);
+                            return (
+                                <div class="flat-card" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #10b981; flex-wrap: wrap; gap: 1rem;">
+                                    <div>
+                                        <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0 0 0.25rem 0;">{name}</h3>
+                                        <span style="font-size: 0.75rem; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.15rem 0.5rem; border-radius: 4px; color: #10b981; font-weight: 600; text-transform: uppercase;">
+                                            Native Alternative
+                                        </span>
+                                    </div>
+                                    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                                        {url ? (
+                                            <a href={url} target="_blank" class="btn" style="background-color: #10b981; border-color: #10b981; padding: 0.5rem 1.25rem;">
+                                                Visit Website &rarr;
+                                            </a>
+                                        ) : (
+                                            <span style="font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin-right: 0.5rem;">Open Source</span>
+                                        )}
+                                        {appStreamId && (
+                                            <a href={`appstream://${appStreamId}`} class="btn" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--accent-color); padding: 0.5rem 1.25rem; font-weight: 700; text-decoration: none;">
+                                                Open in Store &rarr;
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            <div style="margin-bottom: 3rem;">
+                <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
+                    Windows Compatibility (Wine)
+                </h2>
+
+                {isGarbage ? (
+                    <div class="flat-card" style="padding: 1.5rem; border-left: 4px solid #ef4444;">
+                        <h3 style="color: #ef4444; font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0;">Incompatible or Unstable</h3>
+                        <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                            This application has significant issues running under compatibility layers like Wine and is reported as <strong>unstable or incompatible</strong>. We strongly recommend using the native Linux alternatives listed above instead.
+                        </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href={`https://appdb.winehq.org/searchResults.php?sSubmit=Search&sAll=1&sAppName=${encodeURIComponent(app.name)}`} target="_blank" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); padding: 0.5rem 1.25rem;">
+                                Search WineHQ AppDB &rarr;
+                            </a>
+                        </div>
+                    </div>
+                ) : canRunWithWine ? (
+                    <div class="flat-card" style="padding: 1.5rem; border-left: 4px solid #3b82f6;">
+                        <h3 style="color: #3b82f6; font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0;">Runs via Compatibility Layer</h3>
+                        <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                            This Windows application can be run on Linux using compatibility tools like <strong style="color: var(--text-color);">{recommendedRunner || 'Wine / Bottles'}</strong>.
+                        </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href={`https://appdb.winehq.org/searchResults.php?sSubmit=Search&sAll=1&sAppName=${encodeURIComponent(app.name)}`} target="_blank" class="btn blue-btn" style="background-color: #3b82f6; border-color: #3b82f6; padding: 0.5rem 1.25rem;">
+                                Search WineHQ AppDB &rarr;
+                            </a>
+                            <a href="/faq#wine" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); padding: 0.5rem 1.25rem;">
+                                Read Wine Guide
+                            </a>
+                        </div>
+                    </div>
+                ) : (
+                    <div class="flat-card" style="padding: 1.5rem; border-left: 4px solid var(--border-color);">
+                        <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0;">Wine Execution</h3>
+                        <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                            Since this is a Windows application, you can try executing it using tools like Wine or Bottles. Check the WineHQ Database for instructions and compatibility notes.
+                        </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href={`https://appdb.winehq.org/searchResults.php?sSubmit=Search&sAll=1&sAppName=${encodeURIComponent(app.name)}`} target="_blank" class="btn blue-btn" style="background-color: #3b82f6; border-color: #3b82f6; padding: 0.5rem 1.25rem;">
+                                Search WineHQ AppDB &rarr;
+                            </a>
+                            <a href="/faq#wine" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); padding: 0.5rem 1.25rem;">
+                                Read Wine Guide
+                            </a>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </>
+    )}
+</Layout>

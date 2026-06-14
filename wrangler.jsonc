@@ -1,0 +1,20 @@
+{
+	"compatibility_date": "2026-06-14",
+	"compatibility_flags": ["global_fetch_strictly_public"],
+	"name": "itrunsonlinux",
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS"
+	},
+	"observability": {
+		"enabled": true
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "itrunsonlinux-db",
+			"database_id": "16686304-4ae7-4b77-8ac9-e4b731a390cb"
+		}
+	]
+}

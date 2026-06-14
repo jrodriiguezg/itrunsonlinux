@@ -1,0 +1,1 @@
+ALTER TABLE `apps` ADD `popularity` integer DEFAULT 0;

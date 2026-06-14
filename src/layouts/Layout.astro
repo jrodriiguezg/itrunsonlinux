@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Find out if your favorite software works on Linux" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+		<title>{title}</title>
+	</head>
+	<body>
+        <header style="border-bottom: 1px solid var(--border-color); padding: 1.5rem 0; margin-bottom: 3rem;">
+            <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="/" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color);">ItRunsOnLinux</a>
+                <nav style="display: flex; align-items: center; gap: 1.5rem;">
+                    <a href="/faq" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">FAQ & Guide</a>
+                    <a href="https://github.com/jrodriiguezg/itrunsonlinux/issues/new" target="_blank" class="btn">Add Application</a>
+                </nav>
+            </div>
+        </header>
+        <main class="container">
+		    <slot />
+        </main>
+        <footer style="text-align: center; margin-top: 5rem; padding: 2rem 0; border-top: 1px solid var(--border-color); color: var(--text-muted); display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+            <p>Built by the Linux community. Open Source on GitHub.</p>
+            <p style="font-size: 0.9rem;"><a href="/faq" style="color: var(--accent-color); font-weight: 600;">Read the Linux Compatibility Guide &rarr;</a></p>
+        </footer>
+	</body>
+</html>

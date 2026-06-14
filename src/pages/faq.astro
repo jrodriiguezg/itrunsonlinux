@@ -1,0 +1,632 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Compatibility Guide & FAQ - ItRunsOnLinux">
+    <div style="margin-bottom: 3rem; margin-top: 2rem;">
+        <a href="/" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">&larr; Back to search</a>
+        <h1 style="font-size: 3rem; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 800; letter-spacing: -1px;">
+            Linux Compatibility Guide
+        </h1>
+        <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 750px;">
+            If you are new to Linux, seeing terms like <strong>Wine</strong>, <strong>Bottles</strong>, or <strong>Soda</strong> can be confusing. This guide explains how to run Windows applications on Linux and what these terms mean.
+        </p>
+    </div>
+
+    <div class="faq-container">
+        <!-- Sidebar Navigation -->
+        <aside class="faq-sidebar">
+            <div class="sticky-nav">
+                <h3>Quick Navigation</h3>
+                <ul>
+                    <li><a href="#intro">Introduction</a></li>
+                    <li><a href="#sources">Software Sources Configurator</a></li>
+                    <li><a href="#native">Native Apps</a></li>
+                    <li><a href="#wine">Wine</a></li>
+                    <li><a href="#bottles">Bottles</a></li>
+                    <li><a href="#soda">Soda Runner</a></li>
+                    <li><a href="#caffe">Caffe Runner</a></li>
+                    <li><a href="#lutris">Lutris</a></li>
+                    <li><a href="#proton">Proton & GE-Proton</a></li>
+                    <li><a href="#heroic">Heroic Launcher</a></li>
+                    <li><a href="#crossover">CrossOver</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- FAQ Content -->
+        <div class="faq-content">
+            <section id="intro" class="faq-section">
+                <h2>Introduction: How do Windows apps run on Linux?</h2>
+                <p>
+                    Linux is a completely different operating system from Windows. By default, Windows programs (files ending in <code>.exe</code> or <code>.msi</code>) cannot run on Linux because they speak a different "system language."
+                </p>
+                <p>
+                    To solve this, the Linux community has built <strong>compatibility layers</strong>. These layers act as real-time translators, translating Windows system instructions into Linux instructions on the fly. This means software runs with close-to-native performance, without the slowdowns of running a full virtual machine.
+                </p>
+            </section>
+
+            <section id="sources" class="faq-section">
+                <h2>Software Sources & Package Manager Configurator</h2>
+                <p>
+                    Linux installs software from official repositories through graphical software stores or terminal commands. Choose your Linux Distribution and Desktop Environment below to find out where to search for software, what commands to run, and where to find official documentation.
+                </p>
+
+                <div class="configurator-card" style="background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div>
+                            <label for="select-distro" style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-color);">Linux Distribution</label>
+                            <select id="select-distro" style="width: 100%; padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); outline: none; cursor: pointer;">
+                                <option value="ubuntu">Ubuntu</option>
+                                <option value="fedora">Fedora</option>
+                                <option value="debian">Debian</option>
+                                <option value="arch">Arch Linux</option>
+                                <option value="mint">Linux Mint</option>
+                                <option value="pop">Pop!_OS</option>
+                                <option value="unknown" selected>I don't know / No lo sé</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="select-de" style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-color);">Desktop Environment</label>
+                            <select id="select-de" style="width: 100%; padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); outline: none; cursor: pointer;">
+                                <option value="gnome">GNOME</option>
+                                <option value="kde">KDE Plasma</option>
+                                <option value="xfce">XFCE</option>
+                                <option value="cinnamon">Cinnamon</option>
+                                <option value="mate">MATE</option>
+                                <option value="unknown" selected>I don't know / No lo sé</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Configurator Results Container -->
+                    <div id="configurator-results" style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 0.5rem;">
+                        <!-- Dynamically filled by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="native" class="faq-section">
+                <h2>Native Apps</h2>
+                <p>
+                    <strong>Native</strong> means the application was built specifically to run on Linux. It requires no translation layers or special configurations.
+                </p>
+                <div class="info-block">
+                    <strong>Recommendation:</strong> Whenever possible, use native Linux applications. They are faster, more stable, and consume fewer system resources. For example, instead of trying to run Photoshop through compatibility layers, you might use <strong>Krita</strong> or <strong>GIMP</strong>.
+                </div>
+            </section>
+
+            <section id="wine" class="faq-section">
+                <h2>Wine (Wine Is Not an Emulator)</h2>
+                <p>
+                    <strong>Wine</strong> is the foundational open-source translation layer that allows Windows software to run on Linux. Almost every other runner or manager in the Linux ecosystem is built on top of Wine.
+                </p>
+                <p>
+                    Wine intercepts Windows API requests and translates them into Linux system calls. Since it is not a virtual machine, applications run at full speed.
+                </p>
+                <p>
+                    <a href="https://www.winehq.org/" target="_blank" class="faq-link">Visit Official Wine Website &rarr;</a>
+                </p>
+            </section>
+
+            <section id="bottles" class="faq-section">
+                <h2>Bottles</h2>
+                <p>
+                    <strong>Bottles</strong> is a modern, graphical application that makes managing Wine environments incredibly simple. 
+                </p>
+                <p>
+                    Instead of having all your Windows programs share a single Wine environment (which can cause them to conflict and break each other), Bottles lets you create isolated environments called "bottles." You can have a bottle for office software, a bottle for gaming, and another for music production, each with its own settings and dependencies.
+                </p>
+                <p>
+                    <strong>How to install:</strong> Bottles is best installed via <strong>Flatpak</strong> from Flathub. It is the easiest and most stable way to run it on any Linux distribution.
+                </p>
+                <p>
+                    <a href="https://usebottles.com/" target="_blank" class="faq-link">Visit Bottles Website &rarr;</a> | 
+                    <a href="https://flathub.org/apps/use.bottles.bottles" target="_blank" class="faq-link">Get Bottles on Flathub &rarr;</a>
+                </p>
+            </section>
+
+            <section id="soda" class="faq-section">
+                <h2>Soda Runner (Bottles)</h2>
+                <p>
+                    In Bottles, a "runner" is the engine that executes your Windows programs. <strong>Soda</strong> is the default runner created and maintained by the Bottles team.
+                </p>
+                <p>
+                    Soda is a custom Wine build specifically tuned to run standard productivity, office, and creative desktop software (like Photoshop or MS Office). It includes special patches to ensure maximum stability for non-gaming applications.
+                </p>
+            </section>
+
+            <section id="caffe" class="faq-section">
+                <h2>Caffe Runner (Bottles)</h2>
+                <p>
+                    <strong>Caffe</strong> is another runner developed by the Bottles team, but unlike Soda, it is specifically optimized for **gaming**.
+                </p>
+                <p>
+                    Caffe includes experimental patches, low-latency improvements, and compatibility libraries designed to run heavy 3D Windows games with the highest frame rates possible on Linux.
+                </p>
+            </section>
+
+            <section id="lutris" class="faq-section">
+                <h2>Lutris</h2>
+                <p>
+                    <strong>Lutris</strong> is an open-source game manager for Linux. It helps you install and manage games from GOG, Steam, Epic Games, Origin, Ubisoft Connect, and local files in one place.
+                </p>
+                <p>
+                    Lutris automates the installation process by using community-written scripts. When you install a game, Lutris automatically downloads the recommended Wine version, installs required libraries, and applies performance tweaks.
+                </p>
+                <p>
+                    <a href="https://lutris.net/" target="_blank" class="faq-link">Visit Lutris Website &rarr;</a>
+                </p>
+            </section>
+
+            <section id="proton" class="faq-section">
+                <h2>Proton, GE-Proton, & Wine-GE</h2>
+                <p>
+                    <strong>Proton</strong> is a translation layer developed by Valve (makers of Steam) based on Wine. It is specifically designed to run Windows games on Linux through Steam (and is the power behind the Steam Deck). It is highly optimized for performance and handles complex graphics APIs (DirectX 11/12) flawlessly.
+                </p>
+                <p>
+                    <strong>GE-Proton</strong> (by GloriousEggroll) is a community-modified version of Proton that includes extra video codecs, upstream Wine patches, and game-specific hotfixes. It is widely used in Lutris, Heroic, and Steam to fix games that struggle on official Proton.
+                </p>
+                <p>
+                    <strong>Wine-GE</strong> is similar to GE-Proton, but is specifically structured to run outside of Steam (e.g. inside Lutris or Heroic Games Launcher).
+                </p>
+            </section>
+
+            <section id="heroic" class="faq-section">
+                <h2>Heroic Games Launcher</h2>
+                <p>
+                    <strong>Heroic Games Launcher</strong> is an open-source, native Linux client that replaces the official Epic Games Launcher, GOG Galaxy, and Amazon Games.
+                </p>
+                <p>
+                    Instead of running the heavy, resource-intensive Windows clients, Heroic lets you download and play your library natively, while letting you select the runner (like Wine-GE or Proton) to execute the games.
+                </p>
+                <p>
+                    <a href="https://heroicgameslauncher.com/" target="_blank" class="faq-link">Visit Heroic Games Launcher Website &rarr;</a>
+                </p>
+            </section>
+
+            <section id="crossover" class="faq-section">
+                <h2>CrossOver</h2>
+                <p>
+                    <strong>CrossOver</strong> is a commercial, paid wrapper for Wine developed by CodeWeavers. CodeWeavers employs many of the lead developers of the open-source Wine project.
+                </p>
+                <p>
+                    CrossOver offers a highly polished, user-friendly interface and official customer support. If you need to run specific enterprise Windows software (like Microsoft Office or legacy database systems) in a professional environment, CrossOver is the go-to solution. Purchasing CrossOver directly funds the development of the open-source Wine project.
+                </p>
+                <p>
+                    <a href="https://www.codeweavers.com/crossover" target="_blank" class="faq-link">Visit CodeWeavers CrossOver Website &rarr;</a>
+                </p>
+            </section>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    const selectDistro = document.getElementById('select-distro');
+    const selectDe = document.getElementById('select-de');
+    const resultsContainer = document.getElementById('configurator-results');
+
+    const distroData = {
+        ubuntu: {
+            name: 'Ubuntu',
+            pm: 'apt',
+            search: 'apt search <package-name>',
+            install: 'sudo apt install <package-name>',
+            docs: 'https://help.ubuntu.com/',
+        },
+        fedora: {
+            name: 'Fedora',
+            pm: 'dnf',
+            search: 'dnf search <package-name>',
+            install: 'sudo dnf install <package-name>',
+            docs: 'https://docs.fedoraproject.org/',
+        },
+        debian: {
+            name: 'Debian',
+            pm: 'apt',
+            search: 'apt search <package-name>',
+            install: 'sudo apt install <package-name>',
+            docs: 'https://www.debian.org/doc/',
+        },
+        arch: {
+            name: 'Arch Linux',
+            pm: 'pacman',
+            search: 'pacman -Ss <package-name>',
+            install: 'sudo pacman -S <package-name>',
+            docs: 'https://wiki.archlinux.org/',
+        },
+        mint: {
+            name: 'Linux Mint',
+            pm: 'apt',
+            search: 'apt search <package-name>',
+            install: 'sudo apt install <package-name>',
+            docs: 'https://linuxmint-user-guide.readthedocs.io/',
+        },
+        pop: {
+            name: 'Pop!_OS',
+            pm: 'apt',
+            search: 'apt search <package-name>',
+            install: 'sudo apt install <package-name>',
+            docs: 'https://support.system76.com/',
+        }
+    };
+
+    const flatpakData = {
+        ubuntu: {
+            status: 'Requires Setup',
+            command: 'sudo apt update && sudo apt install flatpak\nflatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo',
+            link: 'https://flatpak.org/setup/Ubuntu'
+        },
+        fedora: {
+            status: 'Preloaded (Repo Needed)',
+            command: 'flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo',
+            link: 'https://flatpak.org/setup/Fedora'
+        },
+        debian: {
+            status: 'Requires Setup',
+            command: 'sudo apt update && sudo apt install flatpak\nflatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo',
+            link: 'https://flatpak.org/setup/Debian'
+        },
+        arch: {
+            status: 'Requires Setup',
+            command: 'sudo pacman -S flatpak\nflatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo',
+            link: 'https://flatpak.org/setup/Arch'
+        },
+        mint: {
+            status: 'Configured Out-of-the-Box',
+            command: '# Already configured out of the box in Linux Mint!',
+            link: 'https://flatpak.org/setup/Linux%20Mint'
+        },
+        pop: {
+            status: 'Configured Out-of-the-Box',
+            command: '# Already configured out of the box in Pop!_OS!',
+            link: 'https://flatpak.org/setup/'
+        }
+    };
+
+    const deStores = {
+        gnome: { name: 'GNOME', store: 'GNOME Software' },
+        kde: { name: 'KDE Plasma', store: 'Discover' },
+        xfce: { name: 'XFCE', store: 'Synaptic / Software Center' },
+        cinnamon: { name: 'Cinnamon', store: 'Software Manager' },
+        mate: { name: 'MATE', store: 'Software Boutique / GNOME Software' }
+    };
+
+    function updateConfigurator() {
+        const distro = selectDistro.value;
+        const de = selectDe.value;
+
+        let html = '';
+
+        if (distro === 'unknown' || de === 'unknown') {
+            html += `<div style="display: flex; flex-direction: column; gap: 1.5rem;">`;
+                       if (distro === 'unknown') {
+                html += `
+                    <div style="background-color: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 6px; padding: 1.5rem;">
+                        <h4 style="color: #3b82f6; margin-top: 0; margin-bottom: 0.75rem; font-size: 1.1rem; font-weight: 700;">Identification Trick: Which Distribution am I on?</h4>
+                        <p style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                            Open your system's **Terminal** app and type the following command, then press Enter:
+                        </p>
+                        <pre style="background-color: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: var(--text-color); margin: 0 0 1rem 0; overflow-x: auto; border: 1px solid var(--border-color);">cat /etc/os-release</pre>
+                        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                            Look at the line starting with <code>NAME=</code> or <code>ID=</code> (for example: <code>NAME="Ubuntu"</code> or <code>ID=fedora</code>). This tells you exactly what distribution you are running!
+                        </p>
+                    </div>
+                `;
+            }
+
+            if (de === 'unknown') {
+                html += `
+                    <div style="background-color: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; border-radius: 6px; padding: 1.5rem;">
+                        <h4 style="color: #10b981; margin-top: 0; margin-bottom: 0.75rem; font-size: 1.1rem; font-weight: 700;">Identification Trick: Which Desktop Environment am I using?</h4>
+                        <p style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                            Open your **Terminal** app and execute the following command:
+                        </p>
+                        <pre style="background-color: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: var(--text-color); margin: 0 0 1rem 0; overflow-x: auto; border: 1px solid var(--border-color);">echo $XDG_CURRENT_DESKTOP</pre>
+                        <p style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                            This command prints your active desktop environment code (like <code>GNOME</code>, <code>KDE</code>, <code>XFCE</code>, or <code>X-Cinnamon</code>).
+                        </p>
+                        <strong style="color: var(--text-color); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">Visual layout clues:</strong>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                            <li><strong>GNOME:</strong> Clean panel at the top, no taskbar at the bottom by default, Activities button in the top-left corner.</li>
+                            <li><strong>KDE Plasma / Cinnamon:</strong> Bottom taskbar, clock in the bottom-right, and an application menu button in the bottom-left corner (similar to Windows).</li>
+                            <li><strong>XFCE:</strong> Retro-feeling, classic desktop layout, often with a panel at the bottom or a clean dual-panel system. Extremely lightweight.</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div style="margin-top: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.95rem;">
+                    Select both values from the dropdowns above to display your customized packages guide!
+                </div>
+            `;
+            html += `</div>`;
+        } else {
+            // Both are known
+            const distroInfo = distroData[distro];
+            const flatpakInfo = flatpakData[distro] || { status: 'Unknown', command: '', link: 'https://flatpak.org/setup/' };
+            
+            // Determine the software store based on Distro & DE
+            let storeName = 'Software Store';
+            if (distro === 'pop') {
+                storeName = 'Pop!_Shop';
+            } else if (distro === 'mint') {
+                storeName = 'Software Manager (mintinstall)';
+            } else {
+                const deStore = deStores[de];
+                if (deStore) {
+                    storeName = deStore.store;
+                }
+            }
+
+            const storeLinks = {
+                'Pop!_Shop': 'https://support.system76.com/articles/install-software-pop/',
+                'Software Manager (mintinstall)': 'https://linuxmint-user-guide.readthedocs.io/en/latest/software.html',
+                'GNOME Software': 'https://apps.gnome.org/Software/',
+                'Discover': 'https://apps.kde.org/discover/',
+                'Synaptic / Software Center': 'https://wiki.debian.org/Synaptic',
+                'Software Manager': 'https://linuxmint-user-guide.readthedocs.io/en/latest/software.html',
+                'Software Boutique / GNOME Software': 'https://ubuntu-mate.org/features/boutique/'
+            };
+
+            const storeLink = storeLinks[storeName] || 'https://flathub.org';
+
+            const appStreamIds = {
+                'Pop!_Shop': 'io.elementary.appcenter',
+                'Software Manager (mintinstall)': 'mintinstall',
+                'GNOME Software': 'org.gnome.Software',
+                'Discover': 'org.kde.discover',
+                'Synaptic / Software Center': 'synaptic',
+                'Software Manager': 'mintinstall',
+                'Software Boutique / GNOME Software': 'ubuntu-mate-welcome'
+            };
+
+            const appStreamId = appStreamIds[storeName] || '';
+
+            html += `
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div>
+                        <h3 style="color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.35rem; font-weight: 700;">
+                            Personal Package Guide: ${distroInfo.name} + ${de.toUpperCase()}
+                        </h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0; line-height: 1.6;">
+                            Here is where and how to search or install software on your specific system combination:
+                        </p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+                        <!-- Store GUI -->
+                        <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <strong style="color: var(--text-color); display: block; margin-bottom: 0.5rem; font-size: 1.05rem;">Graphical Software Store (GUI)</strong>
+                                <p style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+                                    Open your main application menu and launch the following app to manage software visually:
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                                <a href="${storeLink}" target="_blank" style="display: inline-block; background-color: rgba(255, 255, 255, 0.06); padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 700; color: var(--accent-color); font-size: 0.95rem; border: 1px solid var(--border-color); text-decoration: underline;">
+                                    ${storeName} &rarr;
+                                </a>
+                                ${appStreamId ? `
+                                    <a href="appstream://${appStreamId}" style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 700; color: #10b981; font-size: 0.95rem; border: 1px solid rgba(16, 185, 129, 0.3); text-decoration: none;">
+                                        Open Store &rarr;
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Flatpak & Flathub Card -->
+                        <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <strong style="color: var(--text-color); display: block; margin-bottom: 0.5rem; font-size: 1.05rem;">Flatpak & Flathub (Universal)</strong>
+                                <span style="font-size: 0.8rem; border: 1px solid ${flatpakInfo.status === 'Configured Out-of-the-Box' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}; padding: 0.15rem 0.5rem; border-radius: 4px; color: ${flatpakInfo.status === 'Configured Out-of-the-Box' ? '#10b981' : '#f59e0b'}; font-weight: 600; display: inline-block; margin-bottom: 0.75rem; background-color: ${flatpakInfo.status === 'Configured Out-of-the-Box' ? 'rgba(16, 185, 129, 0.05)' : 'rgba(245, 158, 11, 0.05)'};">
+                                    ${flatpakInfo.status}
+                                </span>
+                                <p style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+                                    Flatpak is a universal package format for Linux. It runs isolated, secure apps like Bottles, Lutris, and Heroic on all distros.
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                                <a href="${flatpakInfo.link}" target="_blank" style="display: inline-block; background-color: rgba(255, 255, 255, 0.06); padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 700; color: var(--accent-color); font-size: 0.95rem; border: 1px solid var(--border-color); text-decoration: underline;">
+                                    Set Up Flatpak &rarr;
+                                </a>
+                                <a href="https://flathub.org" target="_blank" style="display: inline-block; background-color: rgba(56, 189, 248, 0.1); padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 700; color: #38bdf8; font-size: 0.95rem; border: 1px solid rgba(56, 189, 248, 0.3); text-decoration: none;">
+                                    Go to Flathub &rarr;
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Terminal Command Line -->
+                        <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <strong style="color: var(--text-color); display: block; margin-bottom: 0.5rem; font-size: 1.05rem;">Terminal Package Manager</strong>
+                                <p style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+                                    Your system uses the <code>${distroInfo.pm}</code> tool to manage software packages from the command line.
+                                </p>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <a href="${distroInfo.docs}" target="_blank" style="color: var(--accent-color); font-weight: 600; text-decoration: underline; font-size: 0.9rem;">
+                                    View Official Documentation &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Commands Cheat Sheet -->
+                    <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.5rem;">
+                        <strong style="color: var(--text-color); display: block; margin-bottom: 1rem; font-size: 1.05rem;">Terminal Commands Cheat Sheet</strong>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                            <!-- Native Commands -->
+                            <div>
+                                <span style="font-size: 0.85rem; text-transform: uppercase; color: var(--accent-color); font-weight: 700; display: block; margin-bottom: 0.5rem;">Native Package Manager (${distroInfo.pm})</span>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Search:</span>
+                                        <pre style="background-color: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: var(--text-color); margin: 0; overflow-x: auto; border: 1px solid var(--border-color);">${distroInfo.search}</pre>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Install:</span>
+                                        <pre style="background-color: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: var(--text-color); margin: 0; overflow-x: auto; border: 1px solid var(--border-color);">${distroInfo.install}</pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Flatpak Commands -->
+                            <div>
+                                <span style="font-size: 0.85rem; text-transform: uppercase; color: #38bdf8; font-weight: 700; display: block; margin-bottom: 0.5rem;">Flatpak (Universal)</span>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Search:</span>
+                                        <pre style="background-color: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: var(--text-color); margin: 0; overflow-x: auto; border: 1px solid var(--border-color);">flatpak search &lt;package-name&gt;</pre>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Install:</span>
+                                        <pre style="background-color: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: var(--text-color); margin: 0; overflow-x: auto; border: 1px solid var(--border-color);">flatpak install flathub &lt;package-id&gt;</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${flatpakInfo.command ? `
+                            <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed var(--border-color);">
+                                <span style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 0.5rem;">Distro-Specific Setup Commands:</span>
+                                <pre style="background-color: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: var(--text-color); margin: 0; overflow-x: auto; border: 1px solid var(--border-color);">${flatpakInfo.command}</pre>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        resultsContainer.innerHTML = html;
+    }
+
+    selectDistro.addEventListener('change', updateConfigurator);
+    selectDe.addEventListener('change', updateConfigurator);
+
+    // Initial render
+    updateConfigurator();
+</script>
+</Layout>
+
+<style>
+    .faq-container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .faq-sidebar {
+        position: relative;
+    }
+
+    .sticky-nav {
+        position: sticky;
+        top: 2rem;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .sticky-nav h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        font-weight: 700;
+    }
+
+    .sticky-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .sticky-nav a {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        transition: color 0.2s, padding-left 0.2s;
+        display: block;
+    }
+
+    .sticky-nav a:hover {
+        color: var(--accent-color);
+        padding-left: 4px;
+    }
+
+    .faq-content {
+        display: flex;
+        flex-direction: column;
+        gap: 3.5rem;
+    }
+
+    .faq-section {
+        scroll-margin-top: 2rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 2.5rem;
+    }
+
+    .faq-section:last-child {
+        border-bottom: none;
+    }
+
+    .faq-section h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .faq-section p {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        margin-bottom: 1.25rem;
+        line-height: 1.7;
+    }
+
+    .faq-section code {
+        background-color: rgba(255, 255, 255, 0.08);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-family: monospace;
+    }
+
+    .info-block {
+        background-color: rgba(16, 185, 129, 0.08);
+        border-left: 4px solid var(--accent-color);
+        padding: 1.25rem;
+        border-radius: 0 6px 6px 0;
+        font-size: 1.05rem;
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+
+    .faq-link {
+        color: var(--accent-color);
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: color 0.2s;
+    }
+
+    .faq-link:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .faq-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .faq-sidebar {
+            display: none; /* Hide sidebar on mobile to keep it clean */
+        }
+    }
+</style>

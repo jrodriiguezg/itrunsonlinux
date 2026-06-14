@@ -1,0 +1,430 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../db/schema';
+import { env } from 'cloudflare:workers';
+import { desc, asc } from 'drizzle-orm';
+
+const db = drizzle(env.DB, { schema });
+const allApps = await db.select()
+  .from(schema.apps)
+  .orderBy(desc(schema.apps.popularity), asc(schema.apps.name))
+  .all();
+
+// Filter 5 recently added apps (non-core apps by default, taking the first ones in the standard seed list)
+const recentlyAdded = allApps.filter(app => app.popularity === 0).slice(0, 5);
+
+// Filter top apps
+const topApps = allApps.filter(app => app.popularity > 0);
+---
+
+<Layout title="ItRunsOnLinux - Switch to Linux with Confidence">
+    <div style="text-align: center; margin-bottom: 3rem; margin-top: 2rem;">
+        <h1 style="font-size: 3.5rem; margin-bottom: 1rem; font-weight: 800; letter-spacing: -1px;">
+            Switching to <span style="color: var(--accent-color);">Linux?</span>
+        </h1>
+        <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.6;">
+            Find out if your Windows software and games run on Linux, discover native alternatives, and learn how to configure them easily.
+        </p>
+    </div>
+
+    <SearchBar />
+
+    <div style="background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
+            New to Linux?
+        </h2>
+        <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; max-width: 800px;">
+            You don't need to give up your favorite apps. Through translation layers like <strong>Wine</strong> and sandbox managers like <strong>Bottles</strong>, many Windows programs run directly on Linux at full speed. Explore alternatives below or read our guide to get started.
+        </p>
+        <div>
+            <a href="/faq" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem;">Read Beginner's Guide &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="category-filters">
+        <button class="category-btn active" data-category="all">All Software</button>
+        <button class="category-btn" data-category="Design">Design</button>
+        <button class="category-btn" data-category="Office">Office</button>
+        <button class="category-btn" data-category="Games">Games</button>
+        <button class="category-btn" data-category="Social">Social</button>
+        <button class="category-btn" data-category="Development">Development</button>
+        <button class="category-btn" data-category="Audio">Audio</button>
+        <button class="category-btn" data-category="Utilities">Utilities</button>
+        <button class="category-btn" data-category="Windows Integrated">Windows Integrated</button>
+    </div>
+
+    <!-- Dashboard Layout Grid (Shown by default) -->
+    <div id="dashboard-grid" class="dashboard-grid">
+        <!-- Block 1: Recently Added (Green Theme) -->
+        <div class="dashboard-col green-block">
+            <h2 class="col-title" style="color: #10b981; border-bottom: 1px solid #10b981;">Recently Added</h2>
+            <div class="col-list">
+                {recentlyAdded.map(app => (
+                    <div class="dashboard-item" style="border-left: 4px solid #10b981;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                            <a href={`/app/${app.id}`} class="app-link">{app.name}</a>
+                            {app.homepage && (
+                                <a href={app.homepage} target="_blank" class="web-link green-link">Website &rarr;</a>
+                            )}
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        <!-- Block 2: Top Software (Blue Theme, single column list) -->
+        <div class="dashboard-col blue-block">
+            <h2 class="col-title" style="color: #3b82f6; border-bottom: 1px solid #3b82f6;">Top Software</h2>
+            <div class="col-list" id="top-software-list">
+                {topApps.map((app, index) => (
+                    <div 
+                        class="dashboard-item" 
+                        style={`border-left: 4px solid #3b82f6; ${index >= 10 ? 'display: none;' : ''}`}
+                        data-index={index}
+                    >
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href={`/app/${app.id}`} class="app-link">{app.name}</a>
+                            <div style="display: flex; gap: 0.75rem; align-items: center; font-size: 0.8rem;">
+                                {app.homepage && (
+                                    <a href={app.homepage} target="_blank" class="web-link blue-link">Website</a>
+                                )}
+                                {app.linuxAlternative && (
+                                    <span style="color: var(--accent-color); font-weight: 600; white-space: nowrap;">{app.linuxAlternative.split(' / ')[0]}</span>
+                                )}
+                            </div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
+                    </div>
+                ))}
+            </div>
+            {topApps.length > 10 && (
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <button id="load-more-top" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); font-size: 0.9rem; padding: 0.6rem 2rem; cursor: pointer; border-radius: 6px; font-weight: 600;">
+                        See More &darr;
+                    </button>
+                </div>
+            )}
+        </div>
+    </div>
+
+    <!-- Filtered List Container (Hidden by default) -->
+    <div id="filtered-container" style="display: none;">
+        <h2 id="category-title" style="margin-bottom: 0.5rem; font-size: 1.75rem; color: var(--text-color);">Category</h2>
+        <p id="category-count" style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">Count</p>
+        <div id="category-notice" style="display: none; background-color: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 8px; padding: 1.25rem 2rem; margin-bottom: 2rem;"></div>
+        <div id="filtered-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Rendered by client script -->
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .category-filters {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 3.5rem;
+    }
+
+    .category-btn {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        padding: 0.5rem 1.25rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .category-btn:hover {
+        border-color: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .category-btn.active {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: #fff;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        margin-top: 1rem;
+        align-items: start;
+    }
+
+    .dashboard-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .green-block {
+        border: 2px solid #10b981;
+        border-radius: 8px;
+        padding: 1.5rem;
+        background-color: rgba(16, 185, 129, 0.02);
+    }
+
+    .blue-block {
+        border: 2px solid #3b82f6;
+        border-radius: 8px;
+        padding: 1.5rem;
+        background-color: rgba(59, 130, 246, 0.02);
+    }
+
+    .col-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .col-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .dashboard-item {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 1rem;
+        transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .dashboard-item:hover {
+        border-color: var(--accent-color);
+        background-color: var(--surface-hover);
+    }
+
+    .app-link {
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.2s;
+        text-decoration: none;
+    }
+
+    .app-link:hover {
+        color: var(--accent-color);
+    }
+
+    .web-link {
+        font-size: 0.8rem;
+        text-decoration: underline;
+        white-space: nowrap;
+        font-weight: 600;
+    }
+
+    .green-link {
+        color: #10b981;
+    }
+
+    .green-link:hover {
+        color: #059669;
+    }
+
+    .blue-link {
+        color: #3b82f6;
+    }
+
+    .blue-link:hover {
+        color: #2563eb;
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .columns-split {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+</style>
+
+<script define:vars={{ apps: allApps }}>
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    const dashboardGrid = document.getElementById('dashboard-grid');
+    const filteredContainer = document.getElementById('filtered-container');
+    const filteredList = document.getElementById('filtered-list');
+    const categoryTitle = document.getElementById('category-title');
+    const categoryCount = document.getElementById('category-count');
+    const categoryNotice = document.getElementById('category-notice');
+
+    // Top Software Load More Handler
+    const loadMoreTopBtn = document.getElementById('load-more-top');
+    if (loadMoreTopBtn) {
+        let currentVisibleTop = 10;
+        loadMoreTopBtn.addEventListener('click', () => {
+            const items = document.querySelectorAll('#top-software-list .dashboard-item');
+            let newlyShown = 0;
+            for (let i = currentVisibleTop; i < items.length && newlyShown < 10; i++) {
+                items[i].style.display = 'block';
+                newlyShown++;
+            }
+            currentVisibleTop += newlyShown;
+            if (currentVisibleTop >= items.length) {
+                loadMoreTopBtn.style.display = 'none';
+            }
+        });
+    }
+
+    categoryButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            categoryButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const category = btn.getAttribute('data-category');
+
+            if (category === 'all') {
+                dashboardGrid.style.display = 'grid';
+                filteredContainer.style.display = 'none';
+                
+                // Reset category load more button if any
+                const existingBtn = document.getElementById('load-more-filtered');
+                if (existingBtn) {
+                    existingBtn.remove();
+                }
+            } else {
+                dashboardGrid.style.display = 'none';
+                filteredContainer.style.display = 'block';
+                categoryTitle.textContent = `${category} Software`;
+
+                // Handle special notice for Games
+                if (category === 'Games') {
+                    categoryNotice.style.display = 'block';
+                    categoryNotice.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div>
+                                <strong style="color: var(--text-color); display: block; margin-bottom: 0.25rem; font-size: 1.05rem;">Looking for your games?</strong>
+                                <span style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem;">To check if your games work on Linux, you can also search and access <a href="https://www.protondb.com" target="_blank" style="color: var(--accent-color); font-weight: 700; text-decoration: underline;">ProtonDB</a>, the ultimate database for Steam Play compatibility.</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    categoryNotice.style.display = 'none';
+                    categoryNotice.innerHTML = '';
+                }
+
+                filteredList.innerHTML = '';
+                const filtered = apps.filter(app => app.category === category);
+                categoryCount.textContent = `${filtered.length} applications found`;
+
+                let visibleFilteredCount = 10;
+                
+                const renderNextFilteredBatch = () => {
+                    const batch = filtered.slice(visibleFilteredCount - 10, visibleFilteredCount);
+                    batch.forEach(app => {
+                        const a = document.createElement('a');
+                        a.href = `/app/${app.id}`;
+                        a.className = 'flat-card';
+                        a.style.display = 'flex';
+                        a.style.justifyContent = 'space-between';
+                        a.style.alignItems = 'center';
+                        a.style.gap = '2rem';
+                        a.style.padding = '1.25rem 2rem';
+                        a.style.marginBottom = '0.75rem';
+                        a.style.textDecoration = 'none';
+                        
+                        a.onmouseover = () => {
+                            a.style.borderColor = 'var(--accent-color)';
+                            a.style.backgroundColor = 'var(--surface-hover)';
+                        };
+                        a.onmouseout = () => {
+                            a.style.borderColor = 'var(--border-color)';
+                            a.style.backgroundColor = 'var(--surface-color)';
+                        };
+                        
+                        let altHtml = '';
+                        if (app.linuxAlternative) {
+                            altHtml = `
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; font-size: 0.9rem; color: var(--text-muted); min-width: 180px;">
+                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.15rem; color: var(--accent-color); font-weight: 600;">Alternative</span>
+                                    <span style="color: var(--text-color); font-weight: 600;">${app.linuxAlternative}</span>
+                                </div>
+                            `;
+                        }
+
+                        let websiteHtml = '';
+                        if (app.homepage) {
+                            websiteHtml = `
+                                <a href="${app.homepage}" target="_blank" style="font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; white-space: nowrap;" onclick="event.stopPropagation();">
+                                    Official Website &rarr;
+                                </a>
+                            `;
+                        }
+
+                        a.innerHTML = `
+                            <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; text-align: left;">
+                                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                    <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0;">${app.name}</h3>
+                                    <span style="font-size: 0.75rem; border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 4px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
+                                        ${app.category}
+                                    </span>
+                                    ${websiteHtml}
+                                </div>
+                                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">
+                                    ${app.description}
+                                </p>
+                            </div>
+                            ${altHtml}
+                            <div style="color: var(--accent-color); font-size: 0.95rem; font-weight: 600; white-space: nowrap;">
+                                View details &rarr;
+                            </div>
+                        `;
+                        filteredList.appendChild(a);
+                    });
+
+                    // Remove existing load more button in the container if any
+                    const existingBtn = document.getElementById('load-more-filtered');
+                    if (existingBtn) {
+                        existingBtn.remove();
+                    }
+
+                    if (visibleFilteredCount < filtered.length) {
+                        const btnDiv = document.createElement('div');
+                        btnDiv.id = 'load-more-filtered';
+                        btnDiv.style.cssText = 'text-align: center; margin-top: 1.5rem; margin-bottom: 2rem;';
+                        btnDiv.innerHTML = `
+                            <button class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); font-size: 0.9rem; padding: 0.6rem 2rem; cursor: pointer; font-weight: 600; border-radius: 6px;">
+                                See More &darr;
+                            </button>
+                        `;
+                        btnDiv.querySelector('button').addEventListener('click', () => {
+                            visibleFilteredCount += 10;
+                            renderNextFilteredBatch();
+                        });
+                        filteredContainer.appendChild(btnDiv);
+                    }
+                };
+
+                if (filtered.length > 0) {
+                    renderNextFilteredBatch();
+                } else {
+                    filteredList.innerHTML = `<div style="text-align: center; padding: 3rem; color: var(--text-muted);">No software found in this category.</div>`;
+                    const existingBtn = document.getElementById('load-more-filtered');
+                    if (existingBtn) {
+                        existingBtn.remove();
+                    }
+                }
+            }
+        });
+    });
+</script>
