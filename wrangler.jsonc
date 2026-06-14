@@ -14,7 +14,8 @@
 		{
 			"binding": "DB",
 			"database_name": "itrunsonlinux-db",
-			"database_id": "16686304-4ae7-4b77-8ac9-e4b731a390cb"
+			"database_id": "16686304-4ae7-4b77-8ac9-e4b731a390cb",
+			"migrations_dir": "drizzle"
 		}
 	]
 }
