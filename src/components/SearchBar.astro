@@ -37,7 +37,8 @@ const allApps = await db.select().from(schema.apps).all();
 
         const filtered = apps.filter(app => 
             app.name.toLowerCase().includes(query) || 
-            app.description.toLowerCase().includes(query)
+            app.description.toLowerCase().includes(query) ||
+            (app.alternativeTo && app.alternativeTo.toLowerCase().includes(query))
         ).slice(0, 5);
 
         resultsContainer.innerHTML = '';
@@ -50,8 +51,16 @@ const allApps = await db.select().from(schema.apps).all();
                 a.onmouseover = () => a.style.backgroundColor = 'var(--bg-color)';
                 a.onmouseout = () => a.style.backgroundColor = 'transparent';
                 
+                let alternativeText = '';
+                if (app.alternativeTo && app.alternativeTo.toLowerCase().includes(query) && !app.name.toLowerCase().includes(query)) {
+                    alternativeText = `<span style="font-size: 0.75rem; background-color: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.5rem; border: 1px solid rgba(16, 185, 129, 0.3);">Alternative to Windows App</span>`;
+                }
+                
                 a.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 0.25rem;">${app.name}</div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center;">
+                        ${app.name}
+                        ${alternativeText}
+                    </div>
                     <div style="font-size: 0.85rem; color: var(--text-muted);">${app.category}</div>
                 `;
                 resultsContainer.appendChild(a);

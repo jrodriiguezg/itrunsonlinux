@@ -10,7 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "generate-types": "wrangler types"
+    "generate-types": "wrangler types",
+    "deploy": "npm run build && wrangler deploy",
+    "db:studio": "DB_LOCAL_PATH=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject/ -type f -name \"*.sqlite\" ! -name \"metadata.sqlite\" | head -n 1) npx drizzle-kit studio"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.7.0",
@@ -22,6 +24,7 @@
     "vite": "^7"
   },
   "devDependencies": {
+    "better-sqlite3": "^12.10.1",
     "drizzle-kit": "^0.31.10"
   }
 }

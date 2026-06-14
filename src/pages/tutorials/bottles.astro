@@ -1,0 +1,111 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Running Windows Apps with Bottles - ItRunsOnLinux">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem 0;">
+        <a href="/tutorials" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: inline-block; margin-bottom: 2rem;">&larr; Back to Tutorials</a>
+        
+        <h1 style="font-size: 3rem; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -1px; line-height: 1.2;">Running Windows Apps with <span style="color: var(--accent-color);">Bottles</span></h1>
+        
+        <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+            <span style="font-size: 0.85rem; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-color); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Compatibility</span>
+            <span style="font-size: 0.85rem; background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Intermediate</span>
+        </div>
+
+        <div class="tutorial-content">
+            <p><strong>Bottles</strong> is an application that allows you to easily manage Windows prefixes on Linux. A "prefix" (or a "bottle" in this app's terminology) is essentially a sandboxed Windows environment where you can install software, safely separated from the rest of your system.</p>
+
+            <h2>Why use Bottles?</h2>
+            <p>While you can use raw Wine from the command line, Bottles provides a beautiful Graphical User Interface (GUI) to:</p>
+            <ul>
+                <li>Create different environments for different apps (e.g., one for Gaming, one for Software).</li>
+                <li>Easily manage dependencies (like .NET or Visual C++ redistributables) with one-click installers.</li>
+                <li>Sandbox applications so they cannot access your entire home directory.</li>
+                <li>Automatically tweak gaming performance with DXVK and VKD3D.</li>
+            </ul>
+
+            <h2>Step 1: Installing Bottles</h2>
+            <p>The easiest and most recommended way to install Bottles is via <strong>Flatpak</strong>. If your distribution supports Flatpak (most do, such as Fedora, Linux Mint, and Ubuntu), you can install it from Flathub.</p>
+            
+            <div class="code-block">
+                <code>flatpak install flathub com.usebottles.bottles</code>
+            </div>
+
+            <h2>Step 2: Creating your first Bottle</h2>
+            <p>Once installed, open Bottles from your application launcher.</p>
+            <ol>
+                <li>Click the <strong>"+"</strong> button in the top left corner to create a new bottle.</li>
+                <li>Give it a name (e.g., "Adobe Reader" or "Epic Games").</li>
+                <li>Select the environment type: <strong>Gaming</strong>, <strong>Application</strong>, or <strong>Custom</strong>. This pre-configures settings for optimal performance.</li>
+                <li>Click <strong>Create</strong>. Bottles will download the necessary Wine runners and set up the environment.</li>
+            </ol>
+
+            <h2>Step 3: Installing your Windows Software</h2>
+            <p>Now that your bottle is ready, you can install the software:</p>
+            <ol>
+                <li>Click on your newly created bottle to open its details page.</li>
+                <li>Click the big blue <strong>Run Executable</strong> button at the top.</li>
+                <li>Select the <code>.exe</code> or <code>.msi</code> installer file you downloaded.</li>
+                <li>Follow the Windows installation wizard just like you would on a real Windows PC.</li>
+            </ol>
+
+            <div class="notice">
+                <strong>Pro Tip:</strong> After installing an application, Bottles will automatically detect the installed program and add a shortcut in the "Programs" section of your bottle. You can even click the three dots next to the program and select "Add to Desktop" to launch it directly from your Linux menu in the future!
+            </div>
+            
+            <h2>Conclusion</h2>
+            <p>Bottles takes the headache out of using Wine. By isolating each application into its own bottle, you ensure that configuring one app doesn't break another.</p>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .tutorial-content {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    .tutorial-content p {
+        margin-bottom: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+    .tutorial-content ul, .tutorial-content ol {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content li {
+        margin-bottom: 0.5rem;
+    }
+    .tutorial-content strong {
+        color: var(--text-color);
+    }
+    .code-block {
+        background-color: #0d1117;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        font-family: monospace;
+        color: #e6edf3;
+        overflow-x: auto;
+    }
+    .notice {
+        background-color: rgba(16, 185, 129, 0.05);
+        border-left: 4px solid #10b981;
+        padding: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 2rem 0;
+        color: var(--text-muted);
+    }
+</style>

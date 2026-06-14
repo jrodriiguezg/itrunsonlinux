@@ -1,0 +1,111 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Understanding Wine - ItRunsOnLinux">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem 0;">
+        <a href="/tutorials" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: inline-block; margin-bottom: 2rem;">&larr; Back to Tutorials</a>
+        
+        <h1 style="font-size: 3rem; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -1px; line-height: 1.2;">Understanding <span style="color: var(--accent-color);">Wine</span></h1>
+        
+        <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+            <span style="font-size: 0.85rem; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-color); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Compatibility</span>
+            <span style="font-size: 0.85rem; background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Advanced</span>
+        </div>
+
+        <div class="tutorial-content">
+            <p><strong>Wine</strong> (which originally stood for "Wine Is Not an Emulator") is the foundational technology that allows Windows applications to run on Linux. Understanding how it works is key to troubleshooting software compatibility.</p>
+
+            <h2>How does Wine work?</h2>
+            <p>Unlike a virtual machine or emulator, which has to simulate internal Windows logic, Wine acts as a compatibility layer. It translates Windows system calls (the instructions a program sends to the operating system) into Linux system calls on the fly.</p>
+            <p>Because there is no hardware emulation involved, applications running through Wine can often perform just as fast as they would on native Windows—sometimes even faster, especially in gaming.</p>
+
+            <h2>Installing Wine</h2>
+            <p>You can install Wine directly from your distribution's package manager.</p>
+            <p>For Debian/Ubuntu:</p>
+            <div class="code-block">
+                <code>sudo dpkg --add-architecture i386<br>
+sudo apt update<br>
+sudo apt install --install-recommends winehq-staging</code>
+            </div>
+            
+            <p>For Fedora:</p>
+            <div class="code-block">
+                <code>sudo dnf install wine</code>
+            </div>
+
+            <p>For Arch Linux:</p>
+            <div class="code-block">
+                <code>sudo pacman -S wine-staging wine-gecko wine-mono</code>
+            </div>
+
+            <h2>Using Wine from the Command Line</h2>
+            <p>To run a Windows executable (<code>.exe</code>) using raw Wine, simply open your terminal and type:</p>
+            <div class="code-block">
+                <code>wine path/to/installer.exe</code>
+            </div>
+            
+            <h2>Wine Prefixes</h2>
+            <p>When you run Wine, it creates a hidden folder in your home directory called <code>~/.wine</code>. This is your default <strong>Wine Prefix</strong>. Inside this prefix is a fake Windows file system (with a <code>C:</code> drive, Windows folders, and registry files).</p>
+            <p>It is generally bad practice to install all your software into the default prefix. If one application messes up the Windows registry, it might break all your other apps! Instead, advanced users specify different prefixes using an environment variable:</p>
+            
+            <div class="code-block">
+                <code>WINEPREFIX=~/.wine-photoshop wine setup.exe</code>
+            </div>
+
+            <div class="notice">
+                <strong>Modern Solution:</strong> Managing Wine prefixes manually from the command line can be tedious. That is why graphical tools like <strong>Bottles</strong> and <strong>Lutris</strong> were created! They use Wine under the hood but handle prefix management for you automatically. Check out our Bottles tutorial to learn more.
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .tutorial-content {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    .tutorial-content p {
+        margin-bottom: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+    .tutorial-content ul, .tutorial-content ol {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content li {
+        margin-bottom: 0.5rem;
+    }
+    .tutorial-content strong {
+        color: var(--text-color);
+    }
+    .code-block {
+        background-color: #0d1117;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        font-family: monospace;
+        color: #e6edf3;
+        overflow-x: auto;
+    }
+    .notice {
+        background-color: rgba(245, 158, 11, 0.05);
+        border-left: 4px solid #f59e0b;
+        padding: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 2rem 0;
+        color: var(--text-muted);
+    }
+</style>

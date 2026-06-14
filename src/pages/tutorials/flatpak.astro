@@ -1,0 +1,111 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Getting Started with Flatpak - ItRunsOnLinux">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem 0;">
+        <a href="/tutorials" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: inline-block; margin-bottom: 2rem;">&larr; Back to Tutorials</a>
+        
+        <h1 style="font-size: 3rem; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -1px; line-height: 1.2;">Getting Started with <span style="color: var(--accent-color);">Flatpak</span></h1>
+        
+        <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+            <span style="font-size: 0.85rem; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-color); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Native Apps</span>
+            <span style="font-size: 0.85rem; background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Beginner</span>
+        </div>
+
+        <div class="tutorial-content">
+            <p><strong>Flatpak</strong> is a next-generation technology for building and distributing desktop applications on Linux. Think of it as a universal app store that works exactly the same across Ubuntu, Fedora, Arch Linux, and almost every other distribution.</p>
+
+            <h2>Why is Flatpak so important?</h2>
+            <p>Traditionally, Linux users had to rely on their distribution's package manager (like <code>apt</code> on Ubuntu or <code>pacman</code> on Arch) to install software. This meant that an app developer had to package their app dozens of times for different distributions. Flatpak solves this by:</p>
+            <ul>
+                <li><strong>Sandboxing:</strong> Apps are isolated from your system, meaning they can't break your OS or access your files without permission.</li>
+                <li><strong>Universal compatibility:</strong> A single Flatpak app works on any Linux distribution.</li>
+                <li><strong>Up-to-date software:</strong> You get the latest versions of apps directly from the developers, bypassing slow distribution release cycles.</li>
+            </ul>
+
+            <h2>Setting up Flatpak and Flathub</h2>
+            <p>Many modern distributions (like Fedora, Linux Mint, and Pop!_OS) come with Flatpak pre-installed. However, if you are on Ubuntu, you may need to set it up manually.</p>
+            
+            <p>1. First, install the Flatpak package:</p>
+            <div class="code-block">
+                <code>sudo apt install flatpak</code>
+            </div>
+
+            <p>2. Then, add <strong>Flathub</strong>, which is the main repository (app store) where almost all Flatpak apps are hosted:</p>
+            <div class="code-block">
+                <code>flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo</code>
+            </div>
+            <p>You may need to restart your computer for the changes to fully take effect.</p>
+
+            <h2>How to Install Apps</h2>
+            <p>Once set up, you can search and install apps directly from your system's Software Center (like GNOME Software or KDE Discover) if the Flatpak plugin is installed. Alternatively, you can use the terminal.</p>
+            
+            <p>For example, to install Spotify:</p>
+            <div class="code-block">
+                <code>flatpak install flathub com.spotify.Client</code>
+            </div>
+
+            <h2>Managing Permissions</h2>
+            <p>Because Flatpak apps are sandboxed, sometimes an app might not have permission to access a specific folder or your webcam. To easily manage these permissions, we highly recommend installing an app called <strong>Flatseal</strong>.</p>
+            
+            <div class="code-block">
+                <code>flatpak install flathub com.github.tchx84.Flatseal</code>
+            </div>
+            
+            <div class="notice">
+                <strong>Tip:</strong> Open Flatseal, and you will see a list of all your installed Flatpak applications. You can toggle permissions on and off with a simple graphical interface!
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .tutorial-content {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    .tutorial-content p {
+        margin-bottom: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+    .tutorial-content ul, .tutorial-content ol {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content li {
+        margin-bottom: 0.5rem;
+    }
+    .tutorial-content strong {
+        color: var(--text-color);
+    }
+    .code-block {
+        background-color: #0d1117;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        font-family: monospace;
+        color: #e6edf3;
+        overflow-x: auto;
+    }
+    .notice {
+        background-color: rgba(59, 130, 246, 0.05);
+        border-left: 4px solid #3b82f6;
+        padding: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 2rem 0;
+        color: var(--text-muted);
+    }
+</style>

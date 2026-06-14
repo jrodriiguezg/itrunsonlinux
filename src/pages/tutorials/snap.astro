@@ -1,0 +1,111 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Understanding Snap Packages - ItRunsOnLinux">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem 0;">
+        <a href="/tutorials" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: inline-block; margin-bottom: 2rem;">&larr; Back to Tutorials</a>
+        
+        <h1 style="font-size: 3rem; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -1px; line-height: 1.2;">Understanding <span style="color: var(--accent-color);">Snap</span> Packages</h1>
+        
+        <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+            <span style="font-size: 0.85rem; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-color); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Native Apps</span>
+            <span style="font-size: 0.85rem; background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Beginner</span>
+        </div>
+
+        <div class="tutorial-content">
+            <p><strong>Snap</strong> is a software packaging and deployment system developed by Canonical (the makers of Ubuntu). Like Flatpak, it aims to provide universally compatible, containerized applications that work across many Linux distributions.</p>
+
+            <h2>Why use Snap?</h2>
+            <p>While the Linux community often debates the merits of Snap versus Flatpak (with many users strongly preferring Flatpak due to Snap's proprietary backend and slower startup times), Snap is heavily integrated into Ubuntu and its official derivatives. Some major proprietary applications—like the official Spotify or Slack clients—are officially published and maintained on the Snap Store.</p>
+
+            <h2>Installing Snap</h2>
+            <p>If you are using Ubuntu (or an official flavor like Kubuntu or Xubuntu), Snap is already installed and enabled by default.</p>
+            
+            <p>For Debian or unofficial Ubuntu derivatives (like Linux Mint, which disables Snap by default):</p>
+            <div class="code-block">
+                <code>sudo apt update<br>sudo apt install snapd</code>
+            </div>
+
+            <p>For Arch Linux:</p>
+            <div class="code-block">
+                <code>git clone https://aur.archlinux.org/snapd.git<br>cd snapd<br>makepkg -si<br>sudo systemctl enable --now snapd.socket</code>
+            </div>
+
+            <h2>How to Install Apps via Snap</h2>
+            <p>You can search and install snaps using the Ubuntu Software Center. However, doing it via the terminal is straightforward:</p>
+            
+            <p>To find an app:</p>
+            <div class="code-block">
+                <code>snap find "spotify"</code>
+            </div>
+
+            <p>To install an app:</p>
+            <div class="code-block">
+                <code>sudo snap install spotify</code>
+            </div>
+
+            <h2>Classic vs Strict Confinement</h2>
+            <p>Snaps use a permissions system called "confinement." Most GUI apps use <strong>strict</strong> confinement, meaning they are sandboxed. However, some tools (like code editors or system monitors) require access to your entire system. These are published with <strong>classic</strong> confinement.</p>
+            
+            <p>To install an app that requires classic confinement (like Visual Studio Code), you must explicitly allow it:</p>
+            <div class="code-block">
+                <code>sudo snap install code --classic</code>
+            </div>
+
+            <div class="notice">
+                <strong>Community Note:</strong> Because Snap enforces mandatory auto-updates and relies on a proprietary server backend controlled solely by Canonical, many users and alternative distributions (like Linux Mint and Pop!_OS) recommend using Flatpak instead whenever possible. However, knowing how to use Snap is still useful, as certain server tools (like Nextcloud or Certbot) are highly optimized for Snap.
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .tutorial-content {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    .tutorial-content p {
+        margin-bottom: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+    .tutorial-content ul, .tutorial-content ol {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content li {
+        margin-bottom: 0.5rem;
+    }
+    .tutorial-content strong {
+        color: var(--text-color);
+    }
+    .code-block {
+        background-color: #0d1117;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        font-family: monospace;
+        color: #e6edf3;
+        overflow-x: auto;
+    }
+    .notice {
+        background-color: rgba(245, 158, 11, 0.05);
+        border-left: 4px solid #f59e0b;
+        padding: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 2rem 0;
+        color: var(--text-muted);
+    }
+</style>

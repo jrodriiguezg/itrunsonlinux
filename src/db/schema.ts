@@ -7,6 +7,7 @@ export const apps = sqliteTable('apps', {
   category: text('category').notNull(),
   icon: text('icon'),
   linuxAlternative: text('linux_alternative'),
+  alternativeTo: text('alternative_to'),
   popularity: integer('popularity').default(0),
   homepage: text('homepage'),
 });

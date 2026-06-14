@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const tutorials = [
+    {
+        title: 'Running Windows Apps with Bottles',
+        description: 'Learn how to easily install and run Windows applications in isolated sandbox environments.',
+        slug: 'bottles',
+        category: 'Compatibility'
+    },
+    {
+        title: 'Getting Started with Flatpak',
+        description: 'How to install the universal Linux app store and get access to thousands of sandboxed apps.',
+        slug: 'flatpak',
+        category: 'Native Apps'
+    },
+    {
+        title: 'Understanding Snap Packages',
+        description: 'Learn about Ubuntu\'s containerized software packaging system and how to manage snaps.',
+        slug: 'snap',
+        category: 'Native Apps'
+    },
+    {
+        title: 'Understanding Wine',
+        description: 'A deep dive into the compatibility layer that makes running Windows software possible on Linux.',
+        slug: 'wine',
+        category: 'Compatibility'
+    },
+    {
+        title: 'Using the Arch User Repository (AUR)',
+        description: 'How to access community-maintained software packages on Arch-based distributions.',
+        slug: 'aur',
+        category: 'Advanced'
+    }
+];
+---
+
+<Layout title="Tutorials & Guides - ItRunsOnLinux">
+    <div style="max-width: 800px; margin: 0 auto 4rem auto; margin-top: 2rem;">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 800; text-align: center; letter-spacing: -1px;">Tutorials & <span style="color: var(--accent-color);">Guides</span></h1>
+        <p style="font-size: 1.2rem; color: var(--text-muted); text-align: center; line-height: 1.6;">
+            Learn how to use the tools that power the Linux desktop ecosystem. Master Flatpak, Bottles, Wine, and more.
+        </p>
+    </div>
+
+    <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        {tutorials.map(tutorial => (
+            <a href={`/tutorials/${tutorial.slug}`} class="flat-card" style="display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; padding: 2rem;">
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--accent-color); font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: 0.05em;">{tutorial.category}</div>
+                    <h2 style="font-size: 1.5rem; margin: 0 0 1rem 0; color: var(--text-color);">{tutorial.title}</h2>
+                    <p style="color: var(--text-muted); line-height: 1.6; margin: 0;">{tutorial.description}</p>
+                </div>
+                <div style="margin-top: 2rem; color: var(--accent-color); font-weight: 600; font-size: 0.95rem;">Read Tutorial &rarr;</div>
+            </a>
+        ))}
+    </div>
+</Layout>
+
+<style>
+    .flat-card {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    .flat-card:hover {
+        border-color: var(--accent-color);
+        transform: translateY(-2px);
+    }
+</style>

@@ -17,6 +17,8 @@ const recentlyAdded = allApps.filter(app => app.popularity === 0).slice(0, 5);
 
 // Filter top apps
 const topApps = allApps.filter(app => app.popularity > 0);
+
+const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em; margin-left: 0.5rem; vertical-align: middle;" title="Native Linux Support"></i>`;
 ---
 
 <Layout title="ItRunsOnLinux - Switch to Linux with Confidence">
@@ -39,66 +41,71 @@ const topApps = allApps.filter(app => app.popularity > 0);
             You don't need to give up your favorite apps. Through translation layers like <strong>Wine</strong> and sandbox managers like <strong>Bottles</strong>, many Windows programs run directly on Linux at full speed. Explore alternatives below or read our guide to get started.
         </p>
         <div>
-            <a href="/faq" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem;">Read Beginner's Guide &rarr;</a>
+            <a href="/starter-pack" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; margin-right: 0.5rem; background-color: #10b981; border-color: #10b981;">View Starter Pack &rarr;</a>
+            <a href="/faq" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; background-color: rgba(255, 255, 255, 0.05); color: var(--text-color); border: 1px solid var(--border-color);">Read Beginner's Guide</a>
         </div>
     </div>
 
     <!-- Category Filters -->
-    <div class="category-filters">
-        <button class="category-btn active" data-category="all">All Software</button>
-        <button class="category-btn" data-category="Design">Design</button>
-        <button class="category-btn" data-category="Office">Office</button>
-        <button class="category-btn" data-category="Games">Games</button>
-        <button class="category-btn" data-category="Social">Social</button>
-        <button class="category-btn" data-category="Development">Development</button>
-        <button class="category-btn" data-category="Audio">Audio</button>
-        <button class="category-btn" data-category="Utilities">Utilities</button>
-        <button class="category-btn" data-category="Windows Integrated">Windows Integrated</button>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600; color: var(--text-color); background-color: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+            <input type="checkbox" id="native-only-toggle" style="width: 1.1rem; height: 1.1rem; accent-color: var(--accent-color); cursor: pointer;">
+            🐧 Show only Native Linux Apps
+        </label>
+        <div class="category-filters">
+            <button class="category-btn active" data-category="all">All Software</button>
+            <button class="category-btn" data-category="Design">Design</button>
+            <button class="category-btn" data-category="Office">Office</button>
+            <button class="category-btn" data-category="Games">Games</button>
+            <button class="category-btn" data-category="Social">Social</button>
+            <button class="category-btn" data-category="Development">Development</button>
+            <button class="category-btn" data-category="Audio">Audio</button>
+            <button class="category-btn" data-category="Utilities">Utilities</button>
+            <button class="category-btn" data-category="Windows Integrated">Windows Integrated</button>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); padding: 0.75rem 1rem; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; max-width: max-content; margin-left: auto; margin-right: auto;">
+        <span>Software with official native Linux support is marked with </span>
+        <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(16, 185, 129, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">
+            <i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em;" title="Native Linux Support"></i>
+        </span>
     </div>
 
     <!-- Dashboard Layout Grid (Shown by default) -->
     <div id="dashboard-grid" class="dashboard-grid">
-        <!-- Block 1: Recently Added (Green Theme) -->
-        <div class="dashboard-col green-block">
-            <h2 class="col-title" style="color: #10b981; border-bottom: 1px solid #10b981;">Recently Added</h2>
+        <!-- Block 1: Recently Added -->
+        <div class="dashboard-col flat-block">
+            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">Recently Added</h2>
             <div class="col-list">
                 {recentlyAdded.map(app => (
-                    <div class="dashboard-item" style="border-left: 4px solid #10b981;">
+                    <a href={`/app/${app.id}`} class="dashboard-item" data-native={app.linuxAlternative?.toLowerCase().includes('native') ? "true" : "false"} style="display: block; text-decoration: none;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-                            <a href={`/app/${app.id}`} class="app-link">{app.name}</a>
-                            {app.homepage && (
-                                <a href={app.homepage} target="_blank" class="web-link green-link">Website &rarr;</a>
-                            )}
+                            <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}</span>
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
-                    </div>
+                    </a>
                 ))}
             </div>
         </div>
 
-        <!-- Block 2: Top Software (Blue Theme, single column list) -->
-        <div class="dashboard-col blue-block">
-            <h2 class="col-title" style="color: #3b82f6; border-bottom: 1px solid #3b82f6;">Top Software</h2>
+        <!-- Block 2: Top Software -->
+        <div class="dashboard-col flat-block">
+            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">Top Software</h2>
             <div class="col-list" id="top-software-list">
                 {topApps.map((app, index) => (
-                    <div 
+                    <a href={`/app/${app.id}`}
                         class="dashboard-item" 
-                        style={`border-left: 4px solid #3b82f6; ${index >= 10 ? 'display: none;' : ''}`}
+                        style={`display: block; text-decoration: none; ${index >= 10 ? 'display: none;' : ''}`}
                         data-index={index}
+                        data-native={app.linuxAlternative?.toLowerCase().includes('native') ? "true" : "false"}
                     >
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
-                            <a href={`/app/${app.id}`} class="app-link">{app.name}</a>
-                            <div style="display: flex; gap: 0.75rem; align-items: center; font-size: 0.8rem;">
-                                {app.homepage && (
-                                    <a href={app.homepage} target="_blank" class="web-link blue-link">Website</a>
-                                )}
-                                {app.linuxAlternative && (
-                                    <span style="color: var(--accent-color); font-weight: 600; white-space: nowrap;">{app.linuxAlternative.split(' / ')[0]}</span>
-                                )}
-                            </div>
+                            <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}</span>
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
-                    </div>
+                    </a>
                 ))}
             </div>
             {topApps.length > 10 && (
@@ -168,18 +175,11 @@ const topApps = allApps.filter(app => app.popularity > 0);
         gap: 1rem;
     }
 
-    .green-block {
-        border: 2px solid #10b981;
+    .flat-block {
+        border: 1px solid var(--border-color);
         border-radius: 8px;
         padding: 1.5rem;
-        background-color: rgba(16, 185, 129, 0.02);
-    }
-
-    .blue-block {
-        border: 2px solid #3b82f6;
-        border-radius: 8px;
-        padding: 1.5rem;
-        background-color: rgba(59, 130, 246, 0.02);
+        background-color: var(--surface-color);
     }
 
     .col-title {
@@ -228,20 +228,17 @@ const topApps = allApps.filter(app => app.popularity > 0);
         font-weight: 600;
     }
 
-    .green-link {
-        color: #10b981;
+    .accent-link {
+        color: var(--accent-color);
     }
 
-    .green-link:hover {
-        color: #059669;
+    .accent-link:hover {
+        color: var(--accent-hover);
     }
 
-    .blue-link {
-        color: #3b82f6;
-    }
-
-    .blue-link:hover {
-        color: #2563eb;
+    body.native-only .dashboard-item:not([data-native="true"]),
+    body.native-only .flat-card:not([data-native="true"]) {
+        display: none !important;
     }
 
     @media (max-width: 1024px) {
@@ -259,7 +256,7 @@ const topApps = allApps.filter(app => app.popularity > 0);
     }
 </style>
 
-<script define:vars={{ apps: allApps }}>
+<script define:vars={{ apps: allApps, penguinSvg }}>
     const categoryButtons = document.querySelectorAll('.category-btn');
     const dashboardGrid = document.getElementById('dashboard-grid');
     const filteredContainer = document.getElementById('filtered-container');
@@ -267,6 +264,23 @@ const topApps = allApps.filter(app => app.popularity > 0);
     const categoryTitle = document.getElementById('category-title');
     const categoryCount = document.getElementById('category-count');
     const categoryNotice = document.getElementById('category-notice');
+    const nativeOnlyToggle = document.getElementById('native-only-toggle');
+
+    if (nativeOnlyToggle) {
+        nativeOnlyToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.body.classList.add('native-only');
+            } else {
+                document.body.classList.remove('native-only');
+            }
+            
+            // Re-trigger the active category to update the lists properly
+            const activeCategory = document.querySelector('.category-btn.active');
+            if (activeCategory && activeCategory.getAttribute('data-category') !== 'all') {
+                activeCategory.click();
+            }
+        });
+    }
 
     // Top Software Load More Handler
     const loadMoreTopBtn = document.getElementById('load-more-top');
@@ -275,11 +289,15 @@ const topApps = allApps.filter(app => app.popularity > 0);
         loadMoreTopBtn.addEventListener('click', () => {
             const items = document.querySelectorAll('#top-software-list .dashboard-item');
             let newlyShown = 0;
+            const isNativeOnly = nativeOnlyToggle && nativeOnlyToggle.checked;
+            
             for (let i = currentVisibleTop; i < items.length && newlyShown < 10; i++) {
                 items[i].style.display = 'block';
-                newlyShown++;
+                if (!isNativeOnly || items[i].getAttribute('data-native') === 'true') {
+                    newlyShown++;
+                }
+                currentVisibleTop = i + 1;
             }
-            currentVisibleTop += newlyShown;
             if (currentVisibleTop >= items.length) {
                 loadMoreTopBtn.style.display = 'none';
             }
@@ -324,67 +342,57 @@ const topApps = allApps.filter(app => app.popularity > 0);
                 }
 
                 filteredList.innerHTML = '';
-                const filtered = apps.filter(app => app.category === category);
+                
+                const isNativeOnly = nativeOnlyToggle && nativeOnlyToggle.checked;
+                let filtered = apps.filter(app => app.category === category);
+                
+                if (isNativeOnly) {
+                    filtered = filtered.filter(app => app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native'));
+                }
+                
                 categoryCount.textContent = `${filtered.length} applications found`;
 
                 let visibleFilteredCount = 10;
                 
-                const renderNextFilteredBatch = () => {
-                    const batch = filtered.slice(visibleFilteredCount - 10, visibleFilteredCount);
-                    batch.forEach(app => {
-                        const a = document.createElement('a');
-                        a.href = `/app/${app.id}`;
-                        a.className = 'flat-card';
-                        a.style.display = 'flex';
-                        a.style.justifyContent = 'space-between';
-                        a.style.alignItems = 'center';
-                        a.style.gap = '2rem';
-                        a.style.padding = '1.25rem 2rem';
-                        a.style.marginBottom = '0.75rem';
-                        a.style.textDecoration = 'none';
-                        
-                        a.onmouseover = () => {
-                            a.style.borderColor = 'var(--accent-color)';
-                            a.style.backgroundColor = 'var(--surface-hover)';
-                        };
-                        a.onmouseout = () => {
-                            a.style.borderColor = 'var(--border-color)';
-                            a.style.backgroundColor = 'var(--surface-color)';
-                        };
-                        
-                        let altHtml = '';
-                        if (app.linuxAlternative) {
-                            altHtml = `
-                                <div style="display: flex; flex-direction: column; align-items: flex-end; font-size: 0.9rem; color: var(--text-muted); min-width: 180px;">
-                                    <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.15rem; color: var(--accent-color); font-weight: 600;">Alternative</span>
-                                    <span style="color: var(--text-color); font-weight: 600;">${app.linuxAlternative}</span>
-                                </div>
-                            `;
-                        }
+                    const renderNextFilteredBatch = () => {
+                        const batch = filtered.slice(visibleFilteredCount - 10, visibleFilteredCount);
+                        batch.forEach(app => {
+                            const isNative = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native');
+                            const nativeIconHtml = isNative ? penguinSvg : '';
 
-                        let websiteHtml = '';
-                        if (app.homepage) {
-                            websiteHtml = `
-                                <a href="${app.homepage}" target="_blank" style="font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; white-space: nowrap;" onclick="event.stopPropagation();">
-                                    Official Website &rarr;
-                                </a>
-                            `;
-                        }
-
-                        a.innerHTML = `
-                            <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; text-align: left;">
-                                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                                    <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0;">${app.name}</h3>
-                                    <span style="font-size: 0.75rem; border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 4px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
-                                        ${app.category}
-                                    </span>
-                                    ${websiteHtml}
+                            const a = document.createElement('a');
+                            a.href = `/app/${app.id}`;
+                            a.className = 'flat-card';
+                            a.setAttribute('data-native', isNative ? "true" : "false");
+                            a.style.display = 'flex';
+                            a.style.justifyContent = 'space-between';
+                            a.style.alignItems = 'center';
+                            a.style.gap = '2rem';
+                            a.style.padding = '1.25rem 2rem';
+                            a.style.marginBottom = '0.75rem';
+                            a.style.textDecoration = 'none';
+                            
+                            a.onmouseover = () => {
+                                a.style.borderColor = 'var(--accent-color)';
+                                a.style.backgroundColor = 'var(--surface-hover)';
+                            };
+                            a.onmouseout = () => {
+                                a.style.borderColor = 'var(--border-color)';
+                                a.style.backgroundColor = 'var(--surface-color)';
+                            };
+                            
+                            a.innerHTML = `
+                                <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; text-align: left;">
+                                    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                        <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0;">${app.name}${nativeIconHtml}</h3>
+                                        <span style="font-size: 0.75rem; border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 4px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
+                                            ${app.category}
+                                        </span>
                                 </div>
                                 <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">
                                     ${app.description}
                                 </p>
                             </div>
-                            ${altHtml}
                             <div style="color: var(--accent-color); font-size: 0.95rem; font-weight: 600; white-space: nowrap;">
                                 View details &rarr;
                             </div>

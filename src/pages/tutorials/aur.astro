@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Using the Arch User Repository (AUR) - ItRunsOnLinux">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem 0;">
+        <a href="/tutorials" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: inline-block; margin-bottom: 2rem;">&larr; Back to Tutorials</a>
+        
+        <h1 style="font-size: 3rem; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -1px; line-height: 1.2;">Using the Arch User Repository <span style="color: var(--accent-color);">(AUR)</span></h1>
+        
+        <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+            <span style="font-size: 0.85rem; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-color); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Advanced</span>
+            <span style="font-size: 0.85rem; background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600;">Distribution Specific</span>
+        </div>
+
+        <div class="tutorial-content">
+            <p>If you use Arch Linux or an Arch-based distribution (like Manjaro, EndeavourOS, or Garuda Linux), you have access to one of the largest software repositories in the Linux world: the <strong>Arch User Repository (AUR)</strong>.</p>
+
+            <h2>What is the AUR?</h2>
+            <p>The AUR is a community-driven repository. It contains package descriptions (<code>PKGBUILD</code> files) that allow you to compile and build packages from source or extract them from pre-compiled binaries (like Windows <code>.exe</code>, macOS <code>.dmg</code>, or Debian <code>.deb</code> files) and install them using the <code>pacman</code> package manager.</p>
+            <p>If a piece of software exists for Linux, there is a 99% chance someone has packaged it in the AUR.</p>
+
+            <h2>Installing an AUR Helper (yay)</h2>
+            <p>While you can download and build AUR packages manually using <code>makepkg</code>, the standard approach is to use an <strong>AUR helper</strong>. The most popular AUR helper is <strong>yay</strong> (Yet another Yogurt).</p>
+            
+            <p>To install yay, open your terminal and run the following commands sequentially:</p>
+            <div class="code-block">
+                <code>sudo pacman -S --needed git base-devel<br>
+git clone https://aur.archlinux.org/yay.git<br>
+cd yay<br>
+makepkg -si</code>
+            </div>
+
+            <h2>Using yay to install software</h2>
+            <p>Once <code>yay</code> is installed, you can use it exactly like you use <code>pacman</code>. It will search both the official Arch repositories and the AUR!</p>
+            
+            <p>To search and install a package (for example, Google Chrome):</p>
+            <div class="code-block">
+                <code>yay -S google-chrome</code>
+            </div>
+            
+            <p>To update all your system packages and AUR packages simultaneously:</p>
+            <div class="code-block">
+                <code>yay -Syu</code>
+            </div>
+
+            <div class="notice">
+                <strong>Warning:</strong> AUR packages are user-produced content. Any use of the provided files is at your own risk. It is good practice to occasionally inspect the <code>PKGBUILD</code> files of the software you are installing to ensure they are pulling code from official developer sources.
+            </div>
+
+            <h2>When to use Flatpak vs AUR</h2>
+            <p>A common question among Arch users is whether to use the AUR or Flatpak for a specific app. A good rule of thumb is:</p>
+            <ul>
+                <li><strong>Use Flatpak</strong> for large, proprietary GUI applications (like Spotify, Discord, or Steam) because sandboxing them provides better security.</li>
+                <li><strong>Use the AUR</strong> for system-level tools, CLI utilities, kernel modules, or lightweight open-source apps that integrate deeply with the system.</li>
+            </ul>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .tutorial-content {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    .tutorial-content p {
+        margin-bottom: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+    .tutorial-content ul, .tutorial-content ol {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
+        color: var(--text-muted);
+    }
+    .tutorial-content li {
+        margin-bottom: 0.5rem;
+    }
+    .tutorial-content strong {
+        color: var(--text-color);
+    }
+    .code-block {
+        background-color: #0d1117;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        font-family: monospace;
+        color: #e6edf3;
+        overflow-x: auto;
+    }
+    .notice {
+        background-color: rgba(239, 68, 68, 0.05);
+        border-left: 4px solid #ef4444;
+        padding: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 2rem 0;
+        color: var(--text-muted);
+    }
+</style>
