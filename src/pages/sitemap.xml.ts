@@ -1,13 +1,11 @@
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '../db/schema';
+import { env } from 'cloudflare:workers';
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async ({ request, locals }) => {
+export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   const site = `${url.protocol}//${url.host}`;
-  
-  // @ts-ignore
-  const env = locals?.runtime?.env || process.env;
   
   let apps = [];
   try {

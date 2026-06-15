@@ -1,0 +1,1 @@
+ALTER TABLE `apps` ADD `alternative_to` text;

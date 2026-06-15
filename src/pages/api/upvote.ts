@@ -3,9 +3,10 @@ export const prerender = false;
 import { drizzle } from 'drizzle-orm/d1';
 import { eq, sql } from 'drizzle-orm';
 import * as schema from '../../db/schema';
+import { env } from 'cloudflare:workers';
 import type { APIRoute } from 'astro';
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
     const data = await request.json();
     const { appId } = data;
@@ -17,8 +18,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // @ts-ignore
-    const db = drizzle(locals.runtime.env.DB, { schema });
+    const db = drizzle(env.DB, { schema });
 
     await db.update(schema.apps)
       .set({ popularity: sql`${schema.apps.popularity} + 1` })
