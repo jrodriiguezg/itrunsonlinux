@@ -1067,7 +1067,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'The default file manager and desktop environment shell on Windows.',
     icon: 'windows-file-explorer-icon',
-    linux_alternative: 'Native Linux Version (Dolphin / Nautilus / Nemo)',
+    linux_alternative: 'Dolphin / Nautilus / Nemo',
     popularity: 50,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1089,7 +1089,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'The default command-line interpreter for Windows operating systems.',
     icon: 'windows-command-prompt-icon',
-    linux_alternative: 'Native Linux Version (Bash / Zsh / GNOME Terminal)',
+    linux_alternative: 'GNOME Terminal / Konsole / Bash / Zsh',
     popularity: 50,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1100,7 +1100,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Control Panel applet allowing users to view and control the hardware attached to the computer.',
     icon: 'windows-device-manager-icon',
-    linux_alternative: 'Native Linux Version (Hardinfo / CPU-X / lshw)',
+    linux_alternative: 'Hardinfo / CPU-X / lshw',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1111,7 +1111,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'System utility for managing hard disks, partitions, volumes, and drives.',
     icon: 'windows-disk-management-icon',
-    linux_alternative: 'Native Linux Version (GParted / GNOME Disks)',
+    linux_alternative: 'GParted / GNOME Disks',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1122,7 +1122,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Administrative tool displaying detailed information about system, security, and application logs.',
     icon: 'windows-event-viewer-icon',
-    linux_alternative: 'Native Linux Version (GNOME Logs / journalctl)',
+    linux_alternative: 'GNOME Logs / journalctl',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1133,7 +1133,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Administrative utility to start, stop, and configure Windows background services.',
     icon: 'windows-services-manager-icon',
-    linux_alternative: 'Native Linux Version (systemctl / Systemd Genies)',
+    linux_alternative: 'systemctl / Systemd Genies',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1144,7 +1144,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Troubleshooting utility to configure startup applications, boot parameters, and system services.',
     icon: 'windows-system-configuration-icon',
-    linux_alternative: 'Native Linux Version (Stacer / systemctl / GNOME Session Properties)',
+    linux_alternative: 'Stacer / systemctl / GNOME Session Properties',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1155,7 +1155,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Microsoft Terminal Services Client to connect and control remote Windows machines.',
     icon: 'windows-remote-desktop-connection-icon',
-    linux_alternative: 'Native Linux Version (Remmina / Vinagre)',
+    linux_alternative: 'Remmina / Vinagre',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1166,7 +1166,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Classic media player for playing audio, video, and viewing images.',
     icon: 'windows-media-player-classic-icon',
-    linux_alternative: 'Native Linux Version (VLC / MPV / Celluloid)',
+    linux_alternative: 'VLC / MPV / Celluloid',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1177,7 +1177,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Isolated desktop environment for running untrusted applications securely.',
     icon: 'windows-sandbox-isolation-icon',
-    linux_alternative: 'Native Linux Version (GNOME Boxes / Distrobox / Firejail)',
+    linux_alternative: 'GNOME Boxes / Distrobox / Firejail',
     popularity: 40,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1188,7 +1188,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Simple desktop post-it note utility.',
     icon: 'windows-sticky-notes-icon',
-    linux_alternative: 'Native Linux Version (Xpad / KNotes / Sticky Notes Applet)',
+    linux_alternative: 'Xpad / KNotes / Sticky Notes Applet',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1199,7 +1199,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Cloud-based task management application integrated into Windows 10/11.',
     icon: 'microsoft-to-do-app-icon',
-    linux_alternative: 'Native Linux Version|flathub:com.todoist.Todoist / Planner',
+    linux_alternative: 'flathub:com.todoist.Todoist / Planner',
     popularity: 45,
     homepage: 'https://to-do.office.com/',
     alternative_to: ''
@@ -1232,7 +1232,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Built-in tool that shows detailed hardware, system components, and software environment configuration.',
     icon: 'windows-system-information-tool-icon',
-    linux_alternative: 'Native Linux Version (lshw / Hardinfo / CPU-X)',
+    linux_alternative: 'lshw / Hardinfo / CPU-X',
     popularity: 40,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1377,7 +1377,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Built-in webcam and camera application for capturing photos and videos.',
     icon: 'windows-camera-icon',
-    linux_alternative: 'Native Linux Version (Cheese / Kamoso / OBS Studio)',
+    linux_alternative: 'Cheese / Kamoso / OBS Studio',
     popularity: 45,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1388,7 +1388,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'The default image viewer, organizer, and editor built into Windows.',
     icon: 'microsoft-photos-icon',
-    linux_alternative: 'Native Linux Version (Loupe / Eye of GNOME / Gwenview)',
+    linux_alternative: 'Loupe / Eye of GNOME / Gwenview',
     popularity: 50,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1399,7 +1399,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'The default media player for playing audio and video on Windows 11.',
     icon: 'windows-media-player-modern-icon',
-    linux_alternative: 'Native Linux Version (VLC / MPV / Celluloid / Haruna)',
+    linux_alternative: 'VLC / MPV / Celluloid / Haruna',
     popularity: 50,
     homepage: 'https://www.microsoft.com/windows',
     alternative_to: ''
@@ -1410,7 +1410,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Official email client, calendar, and task manager integrated into Windows.',
     icon: 'microsoft-outlook-icon',
-    linux_alternative: 'Native Linux Version (Thunderbird / Evolution / Geary)',
+    linux_alternative: 'Thunderbird / Evolution / Geary',
     popularity: 50,
     homepage: 'https://outlook.live.com/',
     alternative_to: ''
@@ -1421,7 +1421,7 @@ const newApps = [
     category: 'Windows Integrated',
     description: 'Official digital distribution platform for Windows applications and content.',
     icon: 'microsoft-store-icon',
-    linux_alternative: 'Native Linux Version (GNOME Software / Discover / Flathub)',
+    linux_alternative: 'GNOME Software / Discover / Flathub',
     popularity: 50,
     homepage: 'https://www.microsoft.com/store',
     alternative_to: ''
