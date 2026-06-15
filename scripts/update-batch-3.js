@@ -1,0 +1,178 @@
+import Database from 'better-sqlite3';
+import fs from 'fs';
+import path from 'path';
+
+const alternativesMap = {
+  'argoproj-argocd': 'Native Linux Version|github:argoproj/argo-cd',
+  'aria2-aria2': 'Native Linux Version|github:aria2/aria2',
+  'arjun-g-google-meet-desktop': 'Native Linux Version (Web Client / PWA)',
+  'asciinema-agg': 'Native Linux Version|github:asciinema/agg',
+  'asdfjkl-jerrychess': 'Native Linux Version (Java-based) / PyChess / LucasChess (via Wine)',
+  'assetizr-assetizr': 'Native Linux Version|github:assetizr/assetizr / Curtail / Converseen',
+  'assnctr-unfx-proxy-checker': 'Native Linux Version|github:assnctr/unfx-proxy-checker',
+  'avosskuehler-viana': 'Tracker (physlets.org/tracker) / OpenSource physics video analysis tools',
+  'awehook-blinkmind': 'Native Linux Version|github:awehook/blinkmind / Freeplane / XMind',
+  'bbc-iplayer': 'getiplayer (CLI tool) / Web Browser',
+  'bjlive!-luminearemote': 'Web Interface / OpenRGB (for general smart lighting control)',
+  'bomist-bomist': 'Native Linux Version',
+  'bpbible-bpbible': 'Native Linux Version / Xiphos / BibleTime',
+  'byond-byond': 'Runs under Wine / Bottles',
+  'badlion-badlionclient': 'Native Linux Version / Prism Launcher / Modrinth App',
+  'baldurkarlsson-renderdoc': 'Native Linux Version|github:baldurkarlsson/renderdoc',
+  'balena-balenacli': 'Native Linux Version|github:balena-io/balena-cli',
+  'balsamiq-wireframes': 'Penpot / Figma (Web) / Pencil Project',
+  'bandicamcompany-bandicam': 'OBS Studio / SimpleScreenRecorder / Green Recorder',
+  'bandicamcompany-bandicut': 'LosslessCut / Avidemux',
+  'bandisoft-bandizip': 'PeaZip / Ark / File Roller / Engrampa',
+  'bandisoft-honeyview': 'Viewnior / Gwenview / Nomacs / Pix',
+  'barconv-mirrorop': 'Scrcpy / GNOME Network Displays / Sunshine / Parsec',
+  'bartoszcichecki-lenovolegiontoolkit': 'LenovoLegionLinux (github:johnfanv2/LenovoLegionLinux) / Legionary',
+  'baulk-baulk': 'Not needed in Linux (use apt, flatpak, snap, pacman, dnf)',
+  'bazel-bazelisk': 'Native Linux Version|github:bazelbuild/bazelisk',
+  'bedakosata-bkchem': 'Native Linux Version / Chemtool / Avogadro',
+  'bedrock-oss-regolith': 'Native Linux Version|github:Bedrock-OSS/regolith',
+  'beebeep-beebeep': 'Native Linux Version|flathub:net.sourceforge.BeeBEEP',
+  'beeftext-beeftext': 'Espanso / AutoKey',
+  'belarc-advisor': 'Hardinfo / lshw-gtk / Neofetch / CPU-X',
+  'belgiangovernment-belgium-eidmiddleware': 'Native Linux Version (eid-mw / eid-viewer)',
+  'belgiangovernment-eidviewer': 'Native Linux Version (eid-viewer)',
+  'bellsoft-libericajdk-11': 'Native Linux Version',
+  'bellsoft-libericajdk-11-full': 'Native Linux Version',
+  'bellsoft-libericajdk-14': 'Native Linux Version',
+  'bellsoft-libericajdk-14-full': 'Native Linux Version',
+  'bellsoft-libericajdk-15': 'Native Linux Version',
+  'bellsoft-libericajdk-15-full': 'Native Linux Version',
+  'bellsoft-libericajdk-16': 'Native Linux Version',
+  'bellsoft-libericajdk-16-full': 'Native Linux Version',
+  'bellsoft-libericajdk-17': 'Native Linux Version',
+  'bellsoft-libericajdk-17-full': 'Native Linux Version',
+  'bellsoft-libericajdk-18': 'Native Linux Version',
+  'bellsoft-libericajdk-18-full': 'Native Linux Version',
+  'bellsoft-libericajdk-19': 'Native Linux Version',
+  'bellsoft-libericajdk-19-full': 'Native Linux Version',
+  'bellsoft-libericajdk-8': 'Native Linux Version',
+  'bellsoft-libericajdk-8-full': 'Native Linux Version',
+  'belledonnecommunications-linphone': 'Native Linux Version|flathub:org.linphone.Linphone',
+  'benhollis-pnggauntlet': 'Curtail / Trimage / OptiPNG / pngcrush',
+  'bestnotes-bestnotes': 'Native Linux Version (Web Client / PWA)',
+  'betaflight-betaflight-configurator': 'Native Linux Version|flathub:com.betaflight.betaflight-configurator',
+  'bethesda-launcher': 'Lutris / Heroic Games Launcher / Bottles',
+  'bettercrewlink-bettercrewlink': 'Native Linux Version|github:OhMyGuus/Better-CrewLink',
+  'biss-wsldiskshrinker': 'Not needed in Linux',
+  'billfish-billfish': 'Eagle (via Wine) / KPhotoAlbum / Digikam',
+  'binancetech-binance': 'Native Linux Version (Web Client / PWA)',
+  'binaryfortress-clipboardfusion': 'CopyQ / GPaste / Klipper',
+  'binaryfortress-cloudshow': 'Screenly / Anthias / PiSignage',
+  'binaryfortress-displayfusion': 'Natively supported in Linux (KDE/GNOME handle multi-monitors perfectly)',
+  'binaryfortress-fileseek': 'FSearch / Catfish / ANGRYsearch / locate',
+  'binaryfortress-hashtools': 'GTKHash / sha256sum / md5sum',
+  'binaryfortress-logfusion': 'KSystemLog / lnav / glogg',
+  'binaryfortress-traystatus': 'Natively supported in desktop environments or extensions (e.g. GNOME/KDE Extensions)',
+  'binaryfortress-voicebot': 'OpenASR / Talon / Julius / Whisper',
+  'binaryfortress-windowinspector': 'xwininfo / xprop / KWin debug tools',
+  'binarymark-advancedfilefinder': 'FSearch / Catfish / find / fd',
+  'binarymark-batchdocs': 'pandoc / python-docx / LibreOffice CLI',
+  'binarymark-batchencodingconverter': 'iconv / recode',
+  'binarymark-batchfileencrypt': 'gpg / Cryptomator / VeraCrypt',
+  'binarymark-batchfilemanager': 'Double Commander / Krusader / Bulk Rename (Thunar)',
+  'binarymark-batchfilerename': 'KRename / Métamorphose / Bulk Rename (Thunar)',
+  'binarymark-batchfilereplace': 'sed / ripgrep (rgr) / fnr (Find and Replace)',
+  'binarymark-batchfilesplitjoin': 'split (CLI) / cat (CLI) / Gnome Split',
+  'binarymark-batchfiles': 'sed / awk / Python scripts',
+  'binarymark-batchhexeditor': 'GHex / Bless / ImHex',
+  'binarymark-batchimageconverter': 'Converseen / ImageMagick / Curtail',
+  'binarymark-batchimageenhancer': 'Converseen / Phatch / ImageMagick',
+  'binarymark-batchimageresizer': 'Converseen / Phatch / ImageMagick',
+  'binarymark-batchimagesplitter': 'ImageMagick (convert crop) / Phatch',
+  'binarymark-batchimagewatermarker': 'Converseen / Phatch / ImageMagick',
+  'binarymark-batchimages': 'Converseen / Phatch / ImageMagick',
+  'binarymark-batchphotoface': 'DigiKam (features face recognition and batch queue)',
+  'binarymark-batchregex': 'sed / perl / ripgrep',
+  'binarymark-batchtextfileeditor': 'sed / awk / perl / VS Code bulk edit',
+  'binarymark-biorhythmscalculator': 'Runs under Wine / Web-based calculators',
+  'binarymark-filehashgenerator': 'GTKHash / md5sum / sha256sum',
+  'binarymark-randomnumbergenerator': 'shuf (CLI) / /dev/urandom / Python scripts',
+  'binarymark-streamingvideodownloader': 'yt-dlp / Video Downloader|flathub:com.github.unrud.VideoDownloader',
+  'binarymark-texttomp3converter': 'gTTS / Festival / espeak-ng / Calibre (via TTS plugin)',
+  'binisoft-windowsfirewallcontrol': 'Gufw / Firewalld / OpenSnitch',
+  'biscuit-biscuit': 'Native Linux Version|github:webcatalog/biscuit-desktop / Franz / Ferdium / Rambox',
+  'bitguardian-bitdriverupdater': 'Not needed in Linux (drivers are built into the kernel, updated automatically)',
+  'bitguardian-bitgamebooster': 'Gamemode (Feral Interactive) / MangoHud',
+  'bitrecover-windowslivemailconverter': 'Import tool in Thunderbird / Evolution / Claws Mail',
+  'bitsum-coreprio': 'Natively handled by Linux Kernel (schedulers) / cpufreq / taskset (CLI)',
+  'bitsum-parkcontrol': 'TLP / cpupower (CLI) / CPU Power Manager (GNOME extension)',
+  'bitsum-processlasso': 'Ananicy-cpp (Auto Nice daemon) / Systemd resource control / nice / renice',
+  'bitsum-processlasso-beta': 'Ananicy-cpp (Auto Nice daemon) / Systemd resource control / nice / renice',
+  'bitdefender-bitdefender': 'ClamAV / Sophos Antivirus for Linux (or not needed)',
+  'bitnami-drupal': 'Native Linux Version (Docker / LAMP Stack)',
+  'bitnami-joomla': 'Native Linux Version (Docker / LAMP Stack)',
+  'bitnami-prestashop': 'Native Linux Version (Docker / LAMP Stack)',
+  'bitnami-reportservercommunity': 'Native Linux Version (Docker / Tomcat)',
+  'bitnami-wamp': 'LAMP Stack (Linux, Apache, MySQL, PHP) / Docker / XAMPP for Linux',
+  'bitnami-phpbb': 'Native Linux Version (Docker / LAMP Stack)',
+  'bitvise-ssh-client': 'OpenSSH (terminal) / Remmina / PuTTY / FileZilla',
+  'bitvise-ssh-server': 'OpenSSH Server',
+  'bitwarden-cli': 'Native Linux Version|github:bitwarden/clients',
+  'blastapps-fluentsearch': 'Ulauncher / Albert / KRunner / Rofi',
+  'blinue-magpie': 'Gamescope (Proton FSR) / Built-in desktop magnifier',
+  'blitz-blitz': 'Runs under Wine (via Lutris/Bottles) / Mobalytics (Web)',
+  'bluemarblegeographics-globalmapper': 'QGIS / GRASS GIS',
+  'bluemicrophones-bluesherpa': 'EasyEffects / PulseEffects / Natively class-compliant (plug-and-play)',
+  'bluestack-bluestacks': 'Waydroid / Genymotion / Anbox',
+  'bluebeam-revu-21': 'Master PDF Editor / Okular / LibreOffice Draw / PDFArranger',
+  'blueberry-flashbackpro': 'OBS Studio / VokoscreenNG / SimpleScreenRecorder',
+  'blueberry-flashbackexpress': 'OBS Studio / VokoscreenNG / SimpleScreenRecorder',
+  'bluesound-bluoscontroller': 'Runs under Wine / Web Interface / BluOS API integration tools',
+  'bome-sendsx': 'Sysexxer / MIDI Ox (via Wine) / amidi (CLI)',
+  'bonnefon-glogg': 'Native Linux Version|github:nickg/glogg',
+  'bopsoft-listary': 'FSearch / Ulauncher / Albert / KRunner',
+  'borisyakubchik-simplestfilerenamer': 'KRename / Bulk Rename (Thunar) / Métamorphose',
+  'borntoberoot-networkmanager': 'Native Linux Version|github:BornToRoot/NETworkManager / Wireshark / Angry IP Scanner / NetworkManager (built-in Linux service)',
+  'borvid-httpmasterexpress': 'Postman / Insomnia / Bruno / curl',
+  'borvid-httpmasterprofessional': 'Postman / Insomnia / Bruno / curl',
+  'bostrot-wslmanager': 'Not needed on Linux (you run native distros directly in the terminal or VM managers like Cockpit/Virt-Manager)',
+  'bosyun-boardmix': 'Native Linux Version (Web Client / PWA)',
+  'bosyun-pixso': 'Native Linux Version (Web Client / PWA) / Penpot',
+  'botproductions-iconviewer': 'Natively supported in Linux (KDE Dolphin / GNOME Nautilus show icon previews)',
+  'botkind-allwaysync': 'FreeFileSync / rsync / Rclone',
+  'box-boxtools': 'Box Web Client / rclone with Box integration',
+  'boxhero-boxhero': 'Native Linux Version (Web Client / PWA)',
+  'brave-brave-beta': 'Native Linux Version|flathub:com.brave.Browser',
+  'brave-brave-dev': 'Native Linux Version|flathub:com.brave.Browser',
+  'brave-brave-nightly': 'Native Linux Version|flathub:com.brave.Browser',
+  'brianapps-sizer': 'Natively supported in Window Managers (KDE/GNOME have built-in window size options)',
+  'brianapps-sizer-dev': 'Natively supported in Window Managers (KDE/GNOME have built-in window size options)',
+  'brio-foldersize': 'Baobab (Disk Usage Analyzer) / QDirStat / Ncdu',
+  'brunobanelli-pci-z': 'Hardinfo / lshw / lspci (CLI)',
+  'brunonova-collision': 'Native Linux Version|flathub:eu.nokse.Collision',
+  'brunonova-drmips': 'Native Linux Version (Java-based) / QtSpim / MARS',
+  'brutalchess-brutalchess': 'Native Linux Version|github:brutalchess (or in distro repositories)',
+};
+
+const dbDir = '.wrangler/state/v3/d1/miniflare-D1DatabaseObject/';
+const files = fs.readdirSync(dbDir).filter(f => f.endsWith('.sqlite') && f !== 'metadata.sqlite');
+
+if (files.length === 0) {
+  console.error('No SQLite database found.');
+  process.exit(1);
+}
+
+const dbPath = path.join(dbDir, files[0]);
+const db = new Database(dbPath);
+
+const stmt = db.prepare('UPDATE apps SET linux_alternative = ? WHERE id = ?');
+
+let updatedCount = 0;
+const transaction = db.transaction((data) => {
+  for (const [id, alt] of Object.entries(data)) {
+    const info = stmt.run(alt, id);
+    if (info.changes > 0) {
+      updatedCount++;
+    }
+  }
+});
+
+transaction(alternativesMap);
+
+console.log(`Successfully updated ${updatedCount} apps with their Linux alternatives locally!`);
+db.close();

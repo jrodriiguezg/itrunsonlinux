@@ -53,7 +53,8 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
             🐧 Show only Native Linux Apps
         </label>
         <div class="category-filters">
-            <button class="category-btn active" data-category="all">All Software</button>
+            <button class="category-btn active" data-category="home">Inicio</button>
+            <button class="category-btn" data-category="all">All Software</button>
             <button class="category-btn" data-category="Design">Design</button>
             <button class="category-btn" data-category="Office">Office</button>
             <button class="category-btn" data-category="Games">Games</button>
@@ -276,7 +277,7 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
             
             // Re-trigger the active category to update the lists properly
             const activeCategory = document.querySelector('.category-btn.active');
-            if (activeCategory && activeCategory.getAttribute('data-category') !== 'all') {
+            if (activeCategory && activeCategory.getAttribute('data-category') !== 'home') {
                 activeCategory.click();
             }
         });
@@ -311,7 +312,7 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
 
             const category = btn.getAttribute('data-category');
 
-            if (category === 'all') {
+            if (category === 'home') {
                 dashboardGrid.style.display = 'grid';
                 filteredContainer.style.display = 'none';
                 
@@ -323,7 +324,12 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
             } else {
                 dashboardGrid.style.display = 'none';
                 filteredContainer.style.display = 'block';
-                categoryTitle.textContent = `${category} Software`;
+                
+                if (category === 'all') {
+                    categoryTitle.textContent = `All Software`;
+                } else {
+                    categoryTitle.textContent = `${category} Software`;
+                }
 
                 // Handle special notice for Games
                 if (category === 'Games') {
@@ -344,7 +350,12 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
                 filteredList.innerHTML = '';
                 
                 const isNativeOnly = nativeOnlyToggle && nativeOnlyToggle.checked;
-                let filtered = apps.filter(app => app.category === category);
+                let filtered = [];
+                if (category === 'all') {
+                    filtered = [...apps].sort((a, b) => a.name.localeCompare(b.name));
+                } else {
+                    filtered = apps.filter(app => app.category === category);
+                }
                 
                 if (isNativeOnly) {
                     filtered = filtered.filter(app => app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native'));
