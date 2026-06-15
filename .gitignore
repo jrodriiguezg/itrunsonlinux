@@ -2,6 +2,7 @@
 dist/
 # generated types
 .astro/
+.wrangler/
 
 # dependencies
 node_modules/
@@ -25,3 +26,12 @@ db/
 
 # jetbrains setting folder
 .idea/
+
+# local database dumps and files
+db_local_dump.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Cloudflare local secrets
+.dev.vars
