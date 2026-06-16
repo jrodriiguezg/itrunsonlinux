@@ -6,8 +6,12 @@ import * as schema from '../db/schema';
 import { env } from 'cloudflare:workers';
 import { desc, asc } from 'drizzle-orm';
 import { isWebApp } from '../utils/webapp';
+import { getLanguage, useTranslations } from '../i18n';
 
 const db = drizzle(env.DB, { schema });
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
+
 const allApps = (await db.select()
   .from(schema.apps)
   .orderBy(desc(schema.apps.popularity), asc(schema.apps.name))
@@ -26,13 +30,13 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
 const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82f6" style="vertical-align: middle; margin-left: 0.5rem; display: inline-block;" title="Official Web App / Cloud Version Available"><path d="M0 336c0 79.5 64.5 144 144 144h368c70.7 0 128-57.3 128-128 0-61.9-44-113.6-102.4-125.4C524.3 123 435.3 64 336 64c-82.4 0-153.8 40.7-196.7 102.8C59.9 176.4 0 249.2 0 336z"/></svg>`;
 ---
 
-<Layout title="ItRunsOnLinux - Switch to Linux with Confidence">
+<Layout title={lang === 'en' ? "ItRunsOnLinux - Switch to Linux with Confidence" : "ItRunsOnLinux - Cambia a Linux con confianza"}>
     <div style="text-align: center; margin-bottom: 3rem; margin-top: 2rem;">
         <h1 class="hero-title">
-            Switching to <span style="color: var(--accent-color);">Linux?</span>
+            {t('hero.title')} <span style="color: var(--accent-color);">{t('hero.title.span')}</span>
         </h1>
         <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.6;">
-            Find out if your Windows software and games run on Linux, discover native alternatives, and learn how to configure them easily.
+            {t('hero.subtitle')}
         </p>
     </div>
 
@@ -40,14 +44,14 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
 
     <div style="background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
         <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
-            New to Linux?
+            {t('new.title')}
         </h2>
         <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; max-width: 800px;">
-            You don't need to give up your favorite apps. Through translation layers like <strong>Wine</strong> and sandbox managers like <strong>Bottles</strong>, many Windows programs run directly on Linux at full speed. Explore alternatives below or read our guide to get started.
+            {t('new.desc')}
         </p>
         <div>
-            <a href="/starter-pack" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; margin-right: 0.5rem; background-color: #10b981; border-color: #10b981;">View Starter Pack &rarr;</a>
-            <a href="/faq" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; background-color: rgba(255, 255, 255, 0.05); color: var(--text-color); border: 1px solid var(--border-color);">Read Beginner's Guide</a>
+            <a href="/starter-pack" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; margin-right: 0.5rem; background-color: #10b981; border-color: #10b981;">{t('new.btn.starter')} &rarr;</a>
+            <a href="/faq" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; background-color: rgba(255, 255, 255, 0.05); color: var(--text-color); border: 1px solid var(--border-color);">{t('new.btn.guide')}</a>
         </div>
     </div>
 
@@ -55,32 +59,32 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
     <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1rem;">
         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600; color: var(--text-color); background-color: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
             <input type="checkbox" id="native-only-toggle" style="width: 1.1rem; height: 1.1rem; accent-color: var(--accent-color); cursor: pointer;">
-            🐧 Show only Native Linux Apps
+            🐧 {t('toggle.native')}
         </label>
         <div class="category-filters">
-            <button class="category-btn active" data-category="home">Home</button>
-            <button class="category-btn" data-category="all">All Software</button>
-            <button class="category-btn" data-category="Design">Design</button>
-            <button class="category-btn" data-category="Office">Office</button>
-            <button class="category-btn" data-category="Games">Games</button>
-            <button class="category-btn" data-category="Social">Social</button>
-            <button class="category-btn" data-category="Development">Development</button>
-            <button class="category-btn" data-category="Audio">Audio</button>
-            <button class="category-btn" data-category="Utilities">Utilities</button>
-            <button class="category-btn" data-category="Windows Integrated">Windows Integrated</button>
+            <button class="category-btn active" data-category="home">{t('cat.home')}</button>
+            <button class="category-btn" data-category="all">{t('cat.all')}</button>
+            <button class="category-btn" data-category="Design">{t('cat.design')}</button>
+            <button class="category-btn" data-category="Office">{t('cat.office')}</button>
+            <button class="category-btn" data-category="Games">{t('cat.games')}</button>
+            <button class="category-btn" data-category="Social">{t('cat.social')}</button>
+            <button class="category-btn" data-category="Development">{t('cat.development')}</button>
+            <button class="category-btn" data-category="Audio">{t('cat.audio')}</button>
+            <button class="category-btn" data-category="Utilities">{t('cat.utilities')}</button>
+            <button class="category-btn" data-category="Windows Integrated">{t('cat.winIntegrated')}</button>
         </div>
     </div>
 
     <!-- Legend -->
     <div style="margin-bottom: 2.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem; font-size: 0.9rem; color: var(--text-muted); padding: 0.75rem 1.5rem; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; max-width: max-content; margin-left: auto; margin-right: auto;">
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span>Software with official native Linux support is marked with </span>
+            <span>{t('legend.desc')} </span>
             <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(16, 185, 129, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">
                 <i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em;" title="Native Linux Support"></i>
             </span>
         </div>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span>Official Web App / Cloud version available is marked with </span>
+            <span>{t('legend.webapp')} </span>
             <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(59, 130, 246, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.3);">
                 <svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82f6" style="vertical-align: middle;"><path d="M0 336c0 79.5 64.5 144 144 144h368c70.7 0 128-57.3 128-128 0-61.9-44-113.6-102.4-125.4C524.3 123 435.3 64 336 64c-82.4 0-153.8 40.7-196.7 102.8C59.9 176.4 0 249.2 0 336z"/></svg>
             </span>
@@ -91,7 +95,8 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
     <div id="dashboard-grid" class="dashboard-grid">
         <!-- Block 1: Recently Added -->
         <div class="dashboard-col flat-block">
-            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">Recently Added</h2>
+            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">{t('recent.title')}</h2>
+            <div class="col-list">
                  {recentlyAdded.map(app => (
                     <a href={`/app/${app.id}`} class="dashboard-item" data-native={app.linuxAlternative?.toLowerCase().includes('native') ? "true" : "false"} style="display: block; text-decoration: none;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
@@ -105,7 +110,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
 
         <!-- Block 2: Top Software -->
         <div class="dashboard-col flat-block">
-            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">Top Software</h2>
+            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">{t('top.title')}</h2>
             <div class="col-list" id="top-software-list">
                 {topApps.map((app, index) => (
                     <a href={`/app/${app.id}`}
@@ -124,7 +129,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
             {topApps.length > 10 && (
                 <div style="text-align: center; margin-top: 1.5rem;">
                     <button id="load-more-top" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); font-size: 0.9rem; padding: 0.6rem 2rem; cursor: pointer; border-radius: 6px; font-weight: 600;">
-                        See More &darr;
+                        {t('btn.seeMore')} &darr;
                     </button>
                 </div>
             )}
@@ -254,7 +259,30 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
     }
 </style>
 
-<script define:vars={{ apps: allApps, penguinSvg, webAppSvg }}>
+<script define:vars={{
+    apps: allApps,
+    penguinSvg,
+    webAppSvg,
+    tAllSoftware: t('cat.all'),
+    tGamesNoticeTitle: t('games.notice.title'),
+    tGamesNoticeDesc1: t('games.notice.desc1'),
+    tGamesNoticeDesc2: t('games.notice.desc2'),
+    tNoSoftware: t('no.software'),
+    tSeeMore: t('btn.seeMore'),
+    tViewDetails: t('app.details'),
+    tFoundSuffix: t('cat.found'),
+    tCategories: {
+        'all': t('cat.all'),
+        'Design': t('cat.design'),
+        'Office': t('cat.office'),
+        'Games': t('cat.games'),
+        'Social': t('cat.social'),
+        'Development': t('cat.development'),
+        'Audio': t('cat.audio'),
+        'Utilities': t('cat.utilities'),
+        'Windows Integrated': t('cat.winIntegrated')
+    }
+}}>
     const categoryButtons = document.querySelectorAll('.category-btn');
     const dashboardGrid = document.getElementById('dashboard-grid');
     const filteredContainer = document.getElementById('filtered-container');
@@ -323,9 +351,9 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                 filteredContainer.style.display = 'block';
                 
                 if (category === 'all') {
-                    categoryTitle.textContent = `All Software`;
+                    categoryTitle.textContent = tAllSoftware;
                 } else {
-                    categoryTitle.textContent = `${category} Software`;
+                    categoryTitle.textContent = tCategories[category] || category;
                 }
 
                 // Handle special notice for Games
@@ -334,8 +362,8 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                     categoryNotice.innerHTML = `
                         <div style="display: flex; align-items: center; gap: 1rem;">
                             <div>
-                                <strong style="color: var(--text-color); display: block; margin-bottom: 0.25rem; font-size: 1.05rem;">Looking for your games?</strong>
-                                <span style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem;">To check if your games work on Linux, you can also search and access <a href="https://www.protondb.com" target="_blank" style="color: var(--accent-color); font-weight: 700; text-decoration: underline;">ProtonDB</a>, the ultimate database for Steam Play compatibility.</span>
+                                <strong style="color: var(--text-color); display: block; margin-bottom: 0.25rem; font-size: 1.05rem;">${tGamesNoticeTitle}</strong>
+                                <span style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem;">${tGamesNoticeDesc1} <a href="https://www.protondb.com" target="_blank" style="color: var(--accent-color); font-weight: 700; text-decoration: underline;">ProtonDB</a>${tGamesNoticeDesc2}</span>
                             </div>
                         </div>
                     `;
@@ -358,7 +386,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                     filtered = filtered.filter(app => app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native'));
                 }
                 
-                categoryCount.textContent = `${filtered.length} applications found`;
+                categoryCount.textContent = `${filtered.length} ${tFoundSuffix}`;
 
                 let visibleFilteredCount = 10;
                 
@@ -379,7 +407,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                                     <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                                         <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0;">${app.name}${nativeIconHtml}${webAppIconHtml}</h3>
                                         <span style="font-size: 0.75rem; border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 4px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
-                                            ${app.category}
+                                            ${tCategories[app.category] || app.category}
                                         </span>
                                     </div>
                                     <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">
@@ -387,7 +415,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                                     </p>
                                 </div>
                                 <div style="color: var(--accent-color); font-size: 0.95rem; font-weight: 600; white-space: nowrap;">
-                                    View details &rarr;
+                                    ${tViewDetails} &rarr;
                                 </div>
                             `;
                         filteredList.appendChild(a);
@@ -405,7 +433,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                         btnDiv.style.cssText = 'text-align: center; margin-top: 1.5rem; margin-bottom: 2rem;';
                         btnDiv.innerHTML = `
                             <button class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); font-size: 0.9rem; padding: 0.6rem 2rem; cursor: pointer; font-weight: 600; border-radius: 6px;">
-                                See More &darr;
+                                ${tSeeMore} &darr;
                             </button>
                         `;
                         btnDiv.querySelector('button').addEventListener('click', () => {
@@ -419,7 +447,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                 if (filtered.length > 0) {
                     renderNextFilteredBatch();
                 } else {
-                    filteredList.innerHTML = `<div style="text-align: center; padding: 3rem; color: var(--text-muted);">No software found in this category.</div>`;
+                    filteredList.innerHTML = `<div style="text-align: center; padding: 3rem; color: var(--text-muted);">${tNoSoftware}</div>`;
                     const existingBtn = document.getElementById('load-more-filtered');
                     if (existingBtn) {
                         existingBtn.remove();

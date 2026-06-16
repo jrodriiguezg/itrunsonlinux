@@ -77,7 +77,15 @@ export const translations = {
     'faq.trick.de.gnome': 'Clean panel at the top, no taskbar at the bottom by default, Activities button in the top-left corner.',
     'faq.trick.de.kde': 'Bottom taskbar, clock in the bottom-right, and an application menu button in the bottom-left corner (similar to Windows).',
     'faq.trick.de.xfce': 'Retro-feeling, classic desktop layout, often with a panel at the bottom or a clean dual-panel system. Extremely lightweight.',
-    'faq.selectBoth': 'Select both values from the dropdowns above to display your customized packages guide!'
+    'faq.selectBoth': 'Select both values from the dropdowns above to display your customized packages guide!',
+    'legend.webapp': 'Official Web App / Cloud version available is marked with',
+    'cat.found': 'applications found',
+    'app.webAppTitle': 'Official Web App / Cloud Version Available',
+    'app.webAppDesc': 'This application is natively accessible via a web browser. You can use its full suite of features on Linux directly without needing any emulation layers, Wine, or complex configurations. Many of these services can also be installed as a Progressive Web App (PWA) for a standalone desktop window experience.',
+    'app.openWebApp': 'Open Web App',
+    'app.nativeAlternative': 'Native Alternative',
+    'starter.explored': 'Explore All Software',
+    'starter.essential': 'Essential Apps for New Users'
   },
   es: {
     'nav.tutorials': 'Tutoriales',
@@ -157,7 +165,15 @@ export const translations = {
     'faq.trick.de.gnome': 'Panel limpio en la parte superior, sin barra de tareas en la parte inferior por defecto, botón Actividades en la esquina superior izquierda.',
     'faq.trick.de.kde': 'Barra de tareas inferior, reloj en la parte inferior derecha y un botón de menú de aplicaciones en la esquina inferior izquierda (similar a Windows).',
     'faq.trick.de.xfce': 'Aspecto clásico y retro, panel inferior o sistema de doble panel limpio. Extremadamente ligero.',
-    'faq.selectBoth': '¡Selecciona ambos valores de los menús desplegables para mostrar tu guía de paquetes personalizada!'
+    'faq.selectBoth': '¡Selecciona ambos valores de los menús desplegables para mostrar tu guía de paquetes personalizada!',
+    'legend.webapp': 'La versión oficial de Web App / Nube disponible está marcada con',
+    'cat.found': 'aplicaciones encontradas',
+    'app.webAppTitle': 'Versión oficial de aplicación web o nube disponible',
+    'app.webAppDesc': 'Esta aplicación es accesible de forma nativa a través de un navegador web. Puedes usar todas sus funciones en Linux directamente sin necesidad de capas de emulación, Wine o configuraciones complejas. Muchos de estos servicios también se pueden instalar como una aplicación web progresiva (PWA) para una experiencia de ventana de escritorio independiente.',
+    'app.openWebApp': 'Abrir aplicación web',
+    'app.nativeAlternative': 'Alternativa Nativa',
+    'starter.explored': 'Explorar todo el software',
+    'starter.essential': 'Aplicaciones esenciales para nuevos usuarios'
   }
 } as const;
 

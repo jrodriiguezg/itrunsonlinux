@@ -5,6 +5,7 @@ import * as schema from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { env } from 'cloudflare:workers';
 import { isWebApp } from '../../utils/webapp';
+import { getLanguage, useTranslations } from '../../i18n';
 
 const { id } = Astro.params;
 if (!id) return Astro.redirect('/');
@@ -13,6 +14,9 @@ const db = drizzle(env.DB, { schema });
 
 const app = await db.select().from(schema.apps).where(eq(schema.apps.id, id)).get();
 if (!app) return Astro.redirect('/');
+
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
 
 const appIsWebApp = isWebApp(app);
 
@@ -184,9 +188,9 @@ const getAppStreamId = (name: string): string | undefined => {
 };
 ---
 
-<Layout title={`${app.name} on Linux - ItRunsOnLinux`}>
+<Layout title={lang === 'en' ? `${app.name} on Linux - ItRunsOnLinux` : `${app.name} en Linux - ItRunsOnLinux`}>
     <div style="margin-bottom: 2rem;">
-        <a href="/" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-decoration: none;">&larr; Back to home</a>
+        <a href="/" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-decoration: none;">&larr; {t('nav.back')}</a>
     </div>
 
     <div class="flat-card" style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
@@ -195,14 +199,14 @@ const getAppStreamId = (name: string): string | undefined => {
                 <h1 class="app-title" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0; margin-bottom: 0.5rem;">
                     {app.name}
                     {appIsWebApp && (
-                        <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(59, 130, 246, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.3);" title="Official Web App / Cloud Version Available">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(59, 130, 246, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.3);" title={t('app.webAppTitle')}>
                             <svg viewBox="0 0 640 512" width="18" height="18" fill="#3b82f6" style="vertical-align: middle;"><path d="M0 336c0 79.5 64.5 144 144 144h368c70.7 0 128-57.3 128-128 0-61.9-44-113.6-102.4-125.4C524.3 123 435.3 64 336 64c-82.4 0-153.8 40.7-196.7 102.8C59.9 176.4 0 249.2 0 336z"/></svg>
                         </span>
                     )}
                 </h1>
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <span style="font-size: 0.9rem; border: 1px solid var(--border-color); padding: 0.25rem 0.75rem; border-radius: 4px; color: var(--text-muted);">
-                        {app.category}
+                        {t(`cat.${app.category.toLowerCase()}` as any) || app.category}
                     </span>
                     <button id="upvote-btn" data-appid={app.id} style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; background-color: var(--surface-color); border: 1px solid var(--border-color); padding: 0.25rem 0.75rem; border-radius: 4px; color: var(--text-color); cursor: pointer; transition: all 0.2s;">
                         <span style="color: var(--accent-color);">▲</span>
@@ -212,7 +216,7 @@ const getAppStreamId = (name: string): string | undefined => {
             </div>
             {app.homepage && (
                 <a href={app.homepage} target="_blank" class="btn" style="padding: 0.6rem 1.25rem;">
-                    Official Page &rarr;
+                    {t('app.visitWebsite')} &rarr;
                 </a>
             )}
         </div>
@@ -224,14 +228,14 @@ const getAppStreamId = (name: string): string | undefined => {
     {appIsWebApp && (
         <div class="flat-card" style="margin-bottom: 3rem; padding: 1.5rem; border-left: 4px solid #3b82f6; background-color: rgba(59, 130, 246, 0.03);">
             <h3 style="color: #3b82f6; font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
-                <span>🌐</span> Official Web App / Cloud Version Available
+                <span>🌐</span> {t('app.webAppTitle')}
             </h3>
             <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin: 0 0 1rem 0;">
-                This application is natively accessible via a web browser. You can use its full suite of features on Linux directly without needing any emulation layers, Wine, or complex configurations. Many of these services can also be installed as a <strong>Progressive Web App (PWA)</strong> for a standalone desktop window experience.
+                {t('app.webAppDesc')}
             </p>
             {app.homepage && (
                 <a href={app.homepage} target="_blank" class="btn" style="background-color: #3b82f6; border-color: #3b82f6; padding: 0.5rem 1.25rem; font-size: 0.95rem;">
-                    Open Web App &rarr;
+                    {t('app.openWebApp')} &rarr;
                 </a>
             )}
         </div>
@@ -240,27 +244,27 @@ const getAppStreamId = (name: string): string | undefined => {
     {isNative ? (
         <div style="margin-bottom: 3rem;">
             <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
-                Linux Support
+                {t('app.support')}
             </h2>
             <div class="flat-card" style="padding: 1.5rem; border-left: 4px solid #10b981;">
-                <h3 style="color: #10b981; font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0; display: flex; align-items: center;">Runs Natively <svg viewBox="0 0 448 512" width="16" height="16" fill="currentColor" style="vertical-align: middle; margin-left: 0.5rem; color: #10b981;" title="Native Linux Support"><path d="M220.8 123.3c1 .5 1.8 1.7 3 1.7 1.1 0 2.8-.4 2.9-1.5.2-1.4-1.9-2.3-3.2-2.9-1.7-.7-3.9-1-5.5-.1-.4.2-.8.7-.6 1.1.3 1.3 2.3 1.1 3.4 1.7zm-21.9 1.7c1.2 0 2-1.2 3-1.7 1.1-.6 3.1-.4 3.5-1.7.2-.4-.2-.9-.6-1.1-1.6-.9-3.8-.6-5.5.1-1.3.6-3.4 1.5-3.2 2.9.1 1 1.8 1.5 2.8 1.5zM420 432c-1.3 0-2.8-.2-4.1-.3-8-1-17.7-1.4-25.9-2.2-6.5-.6-13-1.4-19.5-2-1.4-.1-2.9.1-4.3-.1-19.8-3.4-38.3-9-56-18.4-12.7-6.7-24-14.8-34.1-24.6-2-2-4-4.1-6.1-6.1-1.5-1.5-3-2.9-4.3-4.5-5.9-7-11.2-14.5-15.6-22.5-1.6-3-3.1-6.1-4.7-9.1-2-3.8-3.8-7.7-5.5-11.6-4.5-10.2-7.8-21-9.9-32-1-5.3-1.7-10.7-2.3-16.1-.3-2.6-.5-5.3-.8-7.9-.6-5.3-1-10.6-1.5-15.9-.6-6.1-.9-12.2-1-18.3 0-6.1.1-12.3.6-18.4.5-5.3 1.1-10.7 2-16 1.1-6.5 2.5-13 4.2-19.4 1.9-7.1 4.1-14.1 6.8-20.9 2.5-6.3 5.3-12.4 8.5-18.4 3-5.5 6.3-10.8 9.9-15.9 3.5-5 7.3-9.8 11.5-14.3 4.1-4.4 8.5-8.5 13.3-12.3 4.6-3.7 9.5-7.1 14.7-10.1 5.1-3 10.5-5.7 16-8 5.7-2.4 11.6-4.4 17.7-5.9 6.2-1.6 12.6-2.7 19.1-3.3 6.6-.6 13.3-.8 20-.5 6.7.3 13.3.9 19.9 1.9 6.5 1 12.9 2.4 19.1 4.1 6 1.7 11.8 3.8 17.5 6.2 5.5 2.4 10.9 5.2 16 8.3 5.1 3.1 9.9 6.5 14.5 10.3 4.4 3.7 8.6 7.7 12.5 12 3.8 4.3 7.3 8.9 10.5 13.7 3 4.7 5.8 9.6 8.3 14.7 2.4 5 4.6 10.2 6.5 15.6 1.9 5.3 3.5 10.8 4.9 16.4 1.3 5.6 2.4 11.2 3.2 16.9.8 5.7 1.4 11.5 1.7 17.3.3 5.8.4 11.7.3 17.6-.1 5.8-.5 11.6-1 17.3-.5 5.6-1.2 11.1-2.1 16.6-1 5.4-2.2 10.7-3.6 15.9-1.4 5.1-3 10-4.8 14.9-1.9 4.8-4 9.5-6.3 14.1-2.3 4.5-4.8 8.9-7.5 13.1-2.7 4.1-5.6 8-8.7 11.8-3.1 3.7-6.4 7.2-9.9 10.6-3.6 3.4-7.4 6.5-11.4 9.5-4 3-8.2 5.8-12.6 8.3-4.5 2.6-9.1 4.9-13.9 6.9-4.9 2.1-9.9 3.9-15 5.4-5.2 1.6-10.5 2.8-15.9 3.7-5.5.9-11.1 1.5-16.7 1.8-5.6.3-11.3.4-17 .2-5.7-.2-11.4-.6-17-1.3-5.5-.7-11-1.6-16.5-2.8-5.4-1.2-10.7-2.6-15.9-4.3-5.1-1.7-10.1-3.6-14.9-5.8-4.7-2.2-9.3-4.7-13.7-7.4-4.3-2.7-8.4-5.6-12.3-8.8-3.8-3.1-7.4-6.5-10.8-10.1-3.3-3.6-6.4-7.4-9.3-11.4-2.8-4-5.4-8.2-7.8-12.5-2.3-4.3-4.4-8.7-6.2-13.2-1.8-4.4-3.4-8.9-4.8-13.5-1.3-4.6-2.4-9.3-3.3-14-1-4.7-1.7-9.4-2.2-14.2-.5-4.7-.8-9.5-.9-14.3-.1-4.8 0-9.6.2-14.4.2-4.7.6-9.4 1.2-14.1.6-4.6 1.4-9.2 2.3-13.7.9-4.4 2-8.8 3.3-13.1 1.2-4.2 2.6-8.4 4.2-12.5 1.6-4 3.4-8 5.3-11.9 1.9-3.9 4-7.7 6.2-11.4 2.2-3.6 4.6-7.2 7.1-10.6 2.6-3.4 5.3-6.7 8.2-9.9 2.9-3.1 6-6.1 9.2-9 3.2-2.9 6.6-5.6 10.1-8.1 3.5-2.5 7.2-4.8 11-7 3.8-2.1 7.7-4 11.7-5.7 4-1.7 8.1-3.2 12.3-4.4 4.2-1.2 8.5-2.2 12.9-3 4.4-.8 8.8-1.3 13.3-1.6 4.5-.3 9.1-.3 13.6-.1 4.5.2 9 .7 13.4 1.4 4.4.7 8.8 1.6 13.1 2.8 4.3 1.2 8.5 2.6 12.6 4.2 4.1 1.6 8.1 3.5 11.9 5.6 3.8 2.1 7.5 4.5 11 7.1 3.5 2.6 6.8 5.4 10 8.5 3.1 3.1 6 6.4 8.7 9.8 2.6 3.5 5.1 7.2 7.3 11 2.2 3.8 4.2 7.8 5.9 11.9 1.7 4.1 3.1 8.3 4.3 12.6 1.1 4.3 2 8.7 2.6 13.1.6 4.4 1 8.9 1.1 13.4.1 4.5 0 9-.1 13.5-.1 4.5-.4 9-1 13.4-.6 4.4-1.4 8.8-2.4 13.1-1 4.3-2.2 8.5-3.6 12.6-1.4 4.1-3.1 8-5 11.9-1.9 3.8-4 7.5-6.3 11.1-2.3 3.6-4.8 7-7.5 10.2-2.7 3.2-5.6 6.3-8.6 9.2-3 2.9-6.2 5.6-9.5 8.1-3.3 2.5-6.8 4.8-10.4 6.9-3.6 2-7.4 3.8-11.2 5.4-3.9 1.6-7.8 3-11.9 4.1-4 1.1-8.1 2-12.2 2.7-4.1.6-8.3 1-12.5 1.1-4.2.1-8.4.1-12.6-.2zM218.4 416c2.8.2 5.7.5 8.6.8 5.5.5 11.1 1.3 16.6 2.2 5.6.9 11.2 2 16.7 3.3 5.4 1.3 10.9 2.8 16.3 4.5 5.4 1.7 10.7 3.6 16.1 5.8 5.3 2.2 10.5 4.5 15.6 7.1 5 2.6 10 5.4 14.9 8.3 4.8 3 9.5 6.2 14.1 9.5 4.6 3.4 9 7 13.4 10.7 4.3 3.8 8.4 7.7 12.5 11.8 3.9 4.1 7.7 8.3 11.3 12.7 3.6 4.3 7 8.8 10.3 13.4 3.2 4.6 6.2 9.3 9 14.1 2.8 4.8 5.4 9.7 7.8 14.7 2.4 5.1 4.5 10.2 6.4 15.5 1.9 5.3 3.5 10.7 4.9 16.1 1.4 5.5 2.5 11 3.4 16.6.9 5.6 1.6 11.3 2.1 17 .5 5.7.8 11.5 1 17.3.2 5.8.3 11.7.3 17.5-.1 5.8-.3 11.7-.7 17.5-.4 5.8-1 11.5-1.7 17.2-.8 5.6-1.7 11.2-2.9 16.7-1.1 5.5-2.5 10.9-4 16.2-1.5 5.3-3.2 10.5-5 15.6-1.9 5.1-3.9 10.1-6.1 15-2.2 4.9-4.5 9.7-7 14.4-2.5 4.7-5.2 9.2-8 13.6-2.8 4.4-5.7 8.7-8.8 12.8-3.1 4.1-6.3 8-9.6 11.8-3.3 3.8-6.7 7.4-10.2 10.8-3.5 3.5-7 6.8-10.7 9.9-3.7 3.1-7.5 6-11.4 8.7-3.9 2.7-7.9 5.2-12 7.5-4.1 2.3-8.2 4.4-12.4 6.3-4.2 1.9-8.5 3.6-12.8 5.1-4.3 1.4-8.6 2.7-13 3.8-4.4 1-8.8 1.9-13.2 2.5-4.4.6-8.8 1-13.3 1.2-4.4.1-8.9.1-13.3-.1z"/></svg></h3>
+                <h3 style="color: #10b981; font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0; display: flex; align-items: center;">{t('app.runsNatively')} <svg viewBox="0 0 448 512" width="16" height="16" fill="currentColor" style="vertical-align: middle; margin-left: 0.5rem; color: #10b981;" title="Native Linux Support"><path d="M220.8 123.3c1 .5 1.8 1.7 3 1.7 1.1 0 2.8-.4 2.9-1.5.2-1.4-1.9-2.3-3.2-2.9-1.7-.7-3.9-1-5.5-.1-.4.2-.8.7-.6 1.1.3 1.3 2.3 1.1 3.4 1.7zm-21.9 1.7c1.2 0 2-1.2 3-1.7 1.1-.6 3.1-.4 3.5-1.7.2-.4-.2-.9-.6-1.1-1.6-.9-3.8-.6-5.5.1-1.3.6-3.4 1.5-3.2 2.9.1 1 1.8 1.5 2.8 1.5zM420 432c-1.3 0-2.8-.2-4.1-.3-8-1-17.7-1.4-25.9-2.2-6.5-.6-13-1.4-19.5-2-1.4-.1-2.9.1-4.3-.1-19.8-3.4-38.3-9-56-18.4-12.7-6.7-24-14.8-34.1-24.6-2-2-4-4.1-6.1-6.1-1.5-1.5-3-2.9-4.3-4.5-5.9-7-11.2-14.5-15.6-22.5-1.6-3-3.1-6.1-4.7-9.1-2-3.8-3.8-7.7-5.5-11.6-4.5-10.2-7.8-21-9.9-32-1-5.3-1.7-10.7-2.3-16.1-.3-2.6-.5-5.3-.8-7.9-.6-5.3-1-10.6-1.5-15.9-.6-6.1-.9-12.2-1-18.3 0-6.1.1-12.3.6-18.4.5-5.3 1.1-10.7 2-16 1.1-6.5 2.5-13 4.2-19.4 1.9-7.1 4.1-14.1 6.8-20.9 2.5-6.3 5.3-12.4 8.5-18.4 3-5.5 6.3-10.8 9.9-15.9 3.5-5 7.3-9.8 11.5-14.3 4.1-4.4 8.5-8.5 13.3-12.3 4.6-3.7 9.5-7.1 14.7-10.1 5.1-3 10.5-5.7 16-8 5.7-2.4 11.6-4.4 17.7-5.9 6.2-1.6 12.6-2.7 19.1-3.3 6.6-.6 13.3-.8 20-.5 6.7.3 13.3.9 19.9 1.9 6.5 1 12.9 2.4 19.1 4.1 6 1.7 11.8 3.8 17.5 6.2 5.5 2.4 10.9 5.2 16 8.3 5.1 3.1 9.9 6.5 14.5 10.3 4.4 3.7 8.6 7.7 12.5 12 3.8 4.3 7.3 8.9 10.5 13.7 3 4.7 5.8 9.6 8.3 14.7 2.4 5 4.6 10.2 6.5 15.6 1.9 5.3 3.5 10.8 4.9 16.4 1.3 5.6 2.4 11.2 3.2 16.9.8 5.7 1.4 11.5 1.7 17.3.3 5.8.4 11.7.3 17.6-.1 5.8-.5 11.6-1 17.3-.5 5.6-1.2 11.1-2.1 16.6-1 5.4-2.2 10.7-3.6 15.9-1.4 5.1-3 10-4.8 14.9-1.9 4.8-4 9.5-6.3 14.1-2.3 4.5-4.8 8.9-7.5 13.1-2.7 4.1-5.6 8-8.7 11.8-3.1 3.7-6.4 7.2-9.9 10.6-3.6 3.4-7.4 6.5-11.4 9.5-4 3-8.2 5.8-12.6 8.3-4.5 2.6-9.1 4.9-13.9 6.9-4.9 2.1-9.9 3.9-15 5.4-5.2 1.6-10.5 2.8-15.9 3.7-5.5.9-11.1 1.5-16.7 1.8-5.6.3-11.3.4-17 .2-5.7-.2-11.4-.6-17-1.3-5.5-.7-11-1.6-16.5-2.8-5.4-1.2-10.7-2.6-15.9-4.3-5.1-1.7-10.1-3.6-14.9-5.8-4.7-2.2-9.3-4.7-13.7-7.4-4.3-2.7-8.4-5.6-12.3-8.8-3.8-3.1-7.4-6.5-10.8-10.1-3.3-3.6-6.4-7.4-9.3-11.4-2.8-4-5.4-8.2-7.8-12.5-2.3-4.3-4.4-8.7-6.2-13.2-1.8-4.4-3.4-8.9-4.8-13.5-1.3-4.6-2.4-9.3-3.3-14-1-4.7-1.7-9.4-2.2-14.2-.5-4.7-.8-9.5-.9-14.3-.1-4.8 0-9.6.2-14.4.2-4.7.6-9.4 1.2-14.1.6-4.6 1.4-9.2 2.3-13.7.9-4.4 2-8.8 3.3-13.1 1.2-4.2 2.6-8.4 4.2-12.5 1.6-4 3.4-8 5.3-11.9 1.9-3.9 4-7.7 6.2-11.4 2.2-3.6 4.6-7.2 7.1-10.6 2.6-3.4 5.3-6.7 8.2-9.9 2.9-3.1 6-6.1 9.2-9 3.2-2.9 6.6-5.6 10.1-8.1 3.5-2.5 7.2-4.8 11-7 3.8-2.1 7.7-4 11.7-5.7 4-1.7 8.1-3.2 12.3-4.4 4.2-1.2 8.5-2.2 12.9-3 4.4-.8 8.8-1.3 13.3-1.6 4.5-.3 9.1-.3 13.6-.1 4.5.2 9 .7 13.4 1.4 4.4.7 8.8 1.6 13.1 2.8 4.3 1.2 8.5 2.6 12.6 4.2 4.1 1.6 8.1 3.5 11.9 5.6 3.8 2.1 7.5 4.5 11 7.1 3.5 2.6 6.8 5.4 10 8.5 3.1 3.1 6 6.4 8.7 9.8 2.6 3.5 5.1 7.2 7.3 11 2.2 3.8 4.2 7.8 5.9 11.9 1.7 4.1 3.1 8.3 4.3 12.6 1.1 4.3 2 8.7 2.6 13.1.6 4.4 1 8.9 1.1 13.4.1 4.5 0 9-.1 13.5-.1 4.5-.4 9-1 13.4-.6 4.4-1.4 8.8-2.4 13.1-1 4.3-2.2 8.5-3.6 12.6-1.4 4.1-3.1 8-5 11.9-1.9 3.8-4 7.5-6.3 11.1-2.3 3.6-4.8 7-7.5 10.2-2.7 3.2-5.6 6.3-8.6 9.2-3 2.9-6.2 5.6-9.5 8.1-3.3 2.5-6.8 4.8-10.4 6.9-3.6 2-7.4 3.8-11.2 5.4-3.9 1.6-7.8 3-11.9 4.1-4 1.1-8.1 2-12.2 2.7-4.1.6-8.3 1-12.5 1.1-4.2.1-8.4.1-12.6-.2zM218.4 416c2.8.2 5.7.5 8.6.8 5.5.5 11.1 1.3 16.6 2.2 5.6.9 11.2 2 16.7 3.3 5.4 1.3 10.9 2.8 16.3 4.5 5.4 1.7 10.7 3.6 16.1 5.8 5.3 2.2 10.5 4.5 15.6 7.1 5 2.6 10 5.4 14.9 8.3 4.8 3 9.5 6.2 14.1 9.5 4.6 3.4 9 7 13.4 10.7 4.3 3.8 8.4 7.7 12.5 11.8 3.9 4.1 7.7 8.3 11.3 12.7 3.6 4.3 7 8.8 10.3 13.4 3.2 4.6 6.2 9.3 9 14.1 2.8 4.8 5.4 9.7 7.8 14.7 2.4 5.1 4.5 10.2 6.4 15.5 1.9 5.3 3.5 10.7 4.9 16.1 1.4 5.5 2.5 11 3.4 16.6.9 5.6 1.6 11.3 2.1 17 .5 5.7.8 11.5 1 17.3.2 5.8.3 11.7.3 17.5-.1 5.8-.3 11.7-.7 17.5-.4 5.8-1 11.5-1.7 17.2-.8 5.6-1.7 11.2-2.9 16.7-1.1 5.5-2.5 10.9-4 16.2-1.5 5.3-3.2 10.5-5 15.6-1.9 5.1-3.9 10.1-6.1 15-2.2 4.9-4.5 9.7-7 14.4-2.5 4.7-5.2 9.2-8 13.6-2.8 4.4-5.7 8.7-8.8 12.8-3.1 4.1-6.3 8-9.6 11.8-3.3 3.8-6.7 7.4-10.2 10.8-3.5 3.5-7 6.8-10.7 9.9-3.7 3.1-7.5 6-11.4 8.7-3.9 2.7-7.9 5.2-12 7.5-4.1 2.3-8.2 4.4-12.4 6.3-4.2 1.9-8.5 3.6-12.8 5.1-4.3 1.4-8.6 2.7-13 3.8-4.4 1-8.8 1.9-13.2 2.5-4.4.6-8.8 1-13.3 1.2-4.4.1-8.9.1-13.3-.1z"/></svg></h3>
                 <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 1.25rem;">
-                    Good news! <strong>{app.name}</strong> is natively supported on Linux. You do not need to run it through compatibility layers like Wine.
+                    {lang === 'en' ? 'Good news! ' : '¡Buenas noticias! '}<strong>{app.name}</strong> {t('app.nativeDesc')}
                 </p>
                 <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
                     {app.homepage && (
                         <a href={app.homepage} target="_blank" class="btn" style="background-color: #10b981; border-color: #10b981; padding: 0.5rem 1.25rem;">
-                            Visit Official Website &rarr;
+                            {t('app.visitWebsite')} &rarr;
                         </a>
                     )}
                     {githubUrl && (
                         <a href={githubUrl} target="_blank" class="btn" style="background-color: #333; border-color: #333; padding: 0.5rem 1.25rem; color: white; text-decoration: none;">
-                            View Source on GitHub &rarr;
+                            {t('app.viewGithub')} &rarr;
                         </a>
                     )}
                     {(storedFlathubId || getAppStreamId(app.name)) && (
                         <a href={`https://flathub.org/apps/${storedFlathubId || getAppStreamId(app.name)}`} target="_blank" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--accent-color); padding: 0.5rem 1.25rem; font-weight: 700; text-decoration: none;">
-                            Open in Flathub &rarr;
+                            {t('app.openFlathub')} &rarr;
                         </a>
                     )}
                 </div>
@@ -270,12 +274,12 @@ const getAppStreamId = (name: string): string | undefined => {
         <>
             <div style="margin-bottom: 3rem;">
                 <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
-                    Recommended Linux Alternatives
+                    {t('app.alternatives')}
                 </h2>
 
                 {alternativeNames.length === 0 ? (
                     <div style="text-align: center; padding: 3rem 2rem; background-color: var(--surface-color); border: 1px dashed var(--border-color); border-radius: 8px; color: var(--text-muted);">
-                        <p style="font-size: 1.05rem; margin: 0;">No specific Linux alternatives are listed for this application.</p>
+                        <p style="font-size: 1.05rem; margin: 0;">{t('app.noAlternatives')}</p>
                     </div>
                 ) : (
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -287,20 +291,20 @@ const getAppStreamId = (name: string): string | undefined => {
                                     <div>
                                         <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0 0 0.25rem 0;">{name}</h3>
                                         <span style="font-size: 0.75rem; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.15rem 0.5rem; border-radius: 4px; color: #10b981; font-weight: 600; text-transform: uppercase;">
-                                            Native Alternative
+                                            {t('app.nativeAlternative')}
                                         </span>
                                     </div>
                                     <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                                         {url ? (
                                             <a href={url} target="_blank" class="btn" style="background-color: #10b981; border-color: #10b981; padding: 0.5rem 1.25rem;">
-                                                Visit Website &rarr;
+                                                {t('app.visitWebsite')} &rarr;
                                             </a>
                                         ) : (
-                                            <span style="font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin-right: 0.5rem;">Open Source</span>
+                                            <span style="font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin-right: 0.5rem;">{t('app.openSource')}</span>
                                         )}
                                         {appStreamId && (
                                             <a href={`appstream://${appStreamId}`} class="btn" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--accent-color); padding: 0.5rem 1.25rem; font-weight: 700; text-decoration: none;">
-                                                Open in Store &rarr;
+                                                {t('app.openStore')} &rarr;
                                             </a>
                                         )}
                                     </div>
@@ -313,19 +317,19 @@ const getAppStreamId = (name: string): string | undefined => {
 
             <div style="margin-bottom: 3rem;">
                 <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
-                    Compatibility & Emulation
+                    {t('app.compatibility')}
                 </h2>
 
                 <div class="flat-card" style="padding: 1.5rem; border-left: 4px solid var(--accent-color);">
                     <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; margin-bottom: 1.5rem; margin-top: 0;">
-                        Not all Windows software runs using Wine. Some applications use Proton, Bottles, or are simply Web Apps (PWA). Want to know more about the compatibility of this specific application?
+                        {t('app.compatDesc')}
                     </p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                         <a href="https://appdb.winehq.org/" target="_blank" class="btn" style="padding: 0.6rem 1.25rem;">
-                            Search WineHQ AppDB &rarr;
+                            {t('app.searchWinehq')} &rarr;
                         </a>
                         <a href="/faq" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.6rem 1.25rem;">
-                            Read Linux Guide
+                            {t('app.readGuide')}
                         </a>
                     </div>
                 </div>
@@ -334,7 +338,7 @@ const getAppStreamId = (name: string): string | undefined => {
     )}
 
     <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
-        <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; font-weight: 700;">Community Comments</h2>
+        <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; font-weight: 700;">{t('app.comments')}</h2>
         <script src="https://giscus.app/client.js"
             data-repo="jrodriiguezg/itrunsonlinux"
             data-repo-id="R_kgDOMN8B_Q"
@@ -346,7 +350,7 @@ const getAppStreamId = (name: string): string | undefined => {
             data-emit-metadata="0"
             data-input-position="top"
             data-theme="preferred_color_scheme"
-            data-lang="en"
+            data-lang={lang}
             data-loading="lazy"
             crossorigin="anonymous"
             async>
@@ -354,7 +358,7 @@ const getAppStreamId = (name: string): string | undefined => {
     </div>
 </Layout>
 
-<script>
+<script define:vars={{ tAlreadyUpvoted: t('app.upvoteTitle') }}>
     const upvoteBtn = document.getElementById('upvote-btn');
     const upvoteCount = document.getElementById('upvote-count');
     
@@ -365,7 +369,7 @@ const getAppStreamId = (name: string): string | undefined => {
         if (localStorage.getItem(votedKey)) {
             upvoteBtn.style.opacity = '0.5';
             upvoteBtn.style.cursor = 'default';
-            upvoteBtn.title = 'You have already upvoted this app';
+            upvoteBtn.title = tAlreadyUpvoted;
         } else {
             upvoteBtn.addEventListener('click', async () => {
                 try {
@@ -380,7 +384,7 @@ const getAppStreamId = (name: string): string | undefined => {
                         upvoteCount.textContent = (parseInt(upvoteCount.textContent || '0') + 1).toString();
                         upvoteBtn.style.opacity = '0.5';
                         upvoteBtn.style.cursor = 'default';
-                        upvoteBtn.title = 'You have already upvoted this app';
+                        upvoteBtn.title = tAlreadyUpvoted;
                         
                         // Replace element to remove listeners
                         const newBtn = upvoteBtn.cloneNode(true);

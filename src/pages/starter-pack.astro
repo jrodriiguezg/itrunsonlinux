@@ -4,8 +4,11 @@ import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '../db/schema';
 import { inArray } from 'drizzle-orm';
 import { env } from 'cloudflare:workers';
+import { getLanguage, useTranslations } from '../i18n';
 
 const db = drizzle(env.DB, { schema });
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
 
 const starterAppIds = [
   'mozilla-firefox',
@@ -29,11 +32,11 @@ const starterApps = await db.select()
 starterApps.sort((a, b) => starterAppIds.indexOf(a.id) - starterAppIds.indexOf(b.id));
 ---
 
-<Layout title="Linux Starter Pack - Essential Apps for New Users">
+<Layout title={`${t('starter.title')} - ${t('starter.essential')}`}>
     <div style="margin-bottom: 3rem; text-align: center;">
-        <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-color); font-weight: 800; letter-spacing: -1px;">Linux Starter Pack 🐧</h1>
+        <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-color); font-weight: 800; letter-spacing: -1px;">{t('starter.title')} 🐧</h1>
         <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.6;">
-            Just installed Linux? Congratulations! Start here by installing these 10 essential, high-quality applications that run natively and beautifully on Linux.
+            {t('starter.subtitle')}
         </p>
     </div>
 
@@ -46,14 +49,14 @@ starterApps.sort((a, b) => starterAppIds.indexOf(a.id) - starterAppIds.indexOf(b
                         <i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em; margin-left: 0.5rem; vertical-align: middle;" title="Native Linux Support"></i>
                     </h3>
                     <span style="font-size: 0.75rem; border: 1px solid var(--border-color); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--text-muted);">
-                        {app.category}
+                        {t(`cat.${app.category.toLowerCase()}` as any) || app.category}
                     </span>
                 </div>
                 <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0; flex-grow: 1;">
                     {app.description}
                 </p>
                 <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent-color);">View details &rarr;</span>
+                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent-color);">{t('app.details')} &rarr;</span>
                     <span style="font-size: 0.85rem; color: var(--text-muted);">▲ {app.popularity}</span>
                 </div>
             </a>
@@ -61,12 +64,12 @@ starterApps.sort((a, b) => starterAppIds.indexOf(a.id) - starterAppIds.indexOf(b
     </div>
 
     <div style="margin-top: 4rem; text-align: center; background-color: var(--surface-color); padding: 3rem 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
-        <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">Ready for more?</h2>
+        <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">{t('starter.ready')}</h2>
         <p style="color: var(--text-muted); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-            The Linux ecosystem is vast and full of amazing open-source software. Check out the full directory to find everything you need.
+            {t('starter.readyDesc')}
         </p>
         <a href="/" class="btn" style="padding: 0.75rem 1.5rem; font-size: 1.1rem;">
-            Explore All Software &rarr;
+            {t('starter.explored')} &rarr;
         </a>
     </div>
 </Layout>
