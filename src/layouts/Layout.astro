@@ -22,7 +22,7 @@ const t = useTranslations(lang);
 		<meta name="generator" content={Astro.generator} />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<title>{title}</title>
         <script is:inline>
@@ -34,27 +34,29 @@ const t = useTranslations(lang);
         </script>
 	</head>
 	<body>
-        <header style="border-bottom: 1px solid var(--border-color); padding: 1.5rem 0; margin-bottom: 3rem;">
+        <header>
             <div class="container header-container">
-                <a href="/" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color);">ItRunsOnLinux</a>
+                <a href="/" class="logo-link">ItRunsOnLinux</a>
                 <nav class="header-nav">
-                    <a href="/tutorials" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">{t('nav.tutorials')}</a>
-                    <a href="/faq" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">{t('nav.faq')}</a>
+                    <a href="/tutorials" class="nav-link">{t('nav.tutorials')}</a>
+                    <a href="/faq" class="nav-link">{t('nav.faq')}</a>
                     <ThemeToggle />
-                    <button id="lang-toggle-btn" style="background: none; border: 1px solid var(--border-color); color: var(--text-color); cursor: pointer; padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;" title={lang === 'en' ? 'Cambiar a Español' : 'Switch to English'}>
+                    <button id="lang-toggle-btn" class="lang-btn" title={lang === 'en' ? 'Cambiar a Español' : 'Switch to English'}>
                         <i class="fa-solid fa-globe"></i>
-                        {lang === 'en' ? 'ES' : 'EN'}
+                        <span>{lang === 'en' ? 'ES' : 'EN'}</span>
                     </button>
                     <a href="https://github.com/jrodriiguezg/itrunsonlinux/issues/new?title=[App+Suggestion]%20App%20Name&body=Please%20add%20the%20following%20application%3A%0A%0A**Name**%3A%20%0A**Category**%3A%20%0A**Description**%3A%20" target="_blank" class="btn">{t('nav.suggest')}</a>
                 </nav>
             </div>
         </header>
-        <main class="container">
+
+        <main class="container" style="margin-top: 3.5rem;">
 		    <slot />
         </main>
-        <footer style="text-align: center; margin-top: 5rem; padding: 2rem 0; border-top: 1px solid var(--border-color); color: var(--text-muted); display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
-            <p>{t('footer.built')} <a href="https://jrodriiguezg.link" target="_blank" style="color: var(--accent-color); text-decoration: underline;">jrodriiguezg.link</a> {t('footer.forCommunity')}</p>
-            <p style="font-size: 0.9rem;"><a href="/faq" style="color: var(--accent-color); font-weight: 600;">{t('footer.guideLink')} &rarr;</a></p>
+
+        <footer style="text-align: center; margin-top: 6rem; padding: 4rem 0; border-top: 1px solid var(--border-color); color: var(--text-muted); display: flex; flex-direction: column; gap: 0.75rem; align-items: center; font-size: 0.95rem;">
+            <p>{t('footer.built')} <a href="https://jrodriiguezg.link" target="_blank" style="color: var(--accent-color); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--accent-color); padding-bottom: 1px;">jrodriiguezg.link</a> {t('footer.forCommunity')}</p>
+            <p><a href="/faq" style="color: var(--accent-color); font-weight: 700; text-decoration: none;">{t('footer.guideLink')} &rarr;</a></p>
         </footer>
 
         <script define:vars={{ currentLang: lang }}>
@@ -69,3 +71,52 @@ const t = useTranslations(lang);
         </script>
 	</body>
 </html>
+
+<style>
+    .logo-link {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--text-color);
+        letter-spacing: -1px;
+        transition: color 0.15s ease;
+    }
+
+    .logo-link:hover {
+        color: var(--accent-color);
+    }
+
+    .nav-link {
+        color: var(--text-color);
+        font-weight: 600;
+        font-size: 0.9rem;
+        font-family: 'Space Grotesk', sans-serif;
+        transition: color 0.15s ease;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .nav-link:hover {
+        color: var(--accent-color);
+    }
+
+    .lang-btn {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        cursor: pointer;
+        padding: 0.45rem 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.15s ease;
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .lang-btn:hover {
+        border-color: var(--text-color);
+        transform: translateY(-1px);
+    }
+</style>

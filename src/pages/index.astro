@@ -26,40 +26,40 @@ const recentlyAdded = allApps.filter(app => app.popularity === 0).slice(0, 5);
 // Filter top apps
 const topApps = allApps.filter(app => app.popularity > 0);
 
-const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em; margin-left: 0.5rem; vertical-align: middle;" title="Native Linux Support"></i>`;
-const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82f6" style="vertical-align: middle; margin-left: 0.5rem; display: inline-block;" title="Official Web App / Cloud Version Available"><path d="M0 336c0 79.5 64.5 144 144 144h368c70.7 0 128-57.3 128-128 0-61.9-44-113.6-102.4-125.4C524.3 123 435.3 64 336 64c-82.4 0-153.8 40.7-196.7 102.8C59.9 176.4 0 249.2 0 336z"/></svg>`;
+const penguinSvg = `<span class="native-badge-pill" style="display: inline-flex; align-items: center; justify-content: center; background-color: var(--bg-color); color: #10b981; padding: 0.15rem 0.4rem; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; gap: 0.2rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; text-transform: uppercase; margin-left: 0.5rem; vertical-align: middle;" title="Native Linux Support"><i class="fa-brands fa-linux" style="font-size: 1.1em;"></i> Native</span>`;
+const webAppSvg = `<span class="webapp-badge-pill" style="display: inline-flex; align-items: center; justify-content: center; background-color: var(--bg-color); color: #3b82f6; padding: 0.15rem 0.4rem; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.3); font-weight: 700; gap: 0.2rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; text-transform: uppercase; margin-left: 0.5rem; vertical-align: middle;" title="Official Web App / Cloud Version Available"><i class="fa-solid fa-cloud" style="font-size: 1em;"></i> Web App</span>`;
 ---
 
 <Layout title={lang === 'en' ? "ItRunsOnLinux - Switch to Linux with Confidence" : "ItRunsOnLinux - Cambia a Linux con confianza"}>
-    <div style="text-align: center; margin-bottom: 3rem; margin-top: 2rem;">
-        <h1 class="hero-title">
+    <div style="text-align: center; margin-bottom: 3.5rem; margin-top: 2rem;">
+        <h1 class="hero-title" style="margin-bottom: 1rem;">
             {t('hero.title')} <span style="color: var(--accent-color);">{t('hero.title.span')}</span>
         </h1>
-        <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.6;">
+        <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.7; font-weight: 500;">
             {t('hero.subtitle')}
         </p>
     </div>
 
     <SearchBar />
 
-    <div style="background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
+    <div class="flat-card" style="margin-bottom: 3.5rem; padding: 2rem; border-left: 4px solid var(--accent-color); background-color: var(--surface-color);">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color); margin-bottom: 0.75rem; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.5px;">
             {t('new.title')}
         </h2>
-        <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; max-width: 800px;">
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 850px; margin-bottom: 1.5rem;">
             {t('new.desc')}
         </p>
-        <div>
-            <a href="/starter-pack" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; margin-right: 0.5rem; background-color: #10b981; border-color: #10b981;">{t('new.btn.starter')} &rarr;</a>
-            <a href="/faq" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.95rem; background-color: rgba(255, 255, 255, 0.05); color: var(--text-color); border: 1px solid var(--border-color);">{t('new.btn.guide')}</a>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="/starter-pack" class="btn">{t('new.btn.starter')} &rarr;</a>
+            <a href="/faq" class="btn" style="background-color: transparent; color: var(--text-color) !important; border: 1px solid var(--border-color); box-shadow: none;">{t('new.btn.guide')}</a>
         </div>
     </div>
 
     <!-- Category Filters -->
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600; color: var(--text-color); background-color: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 1.25rem; margin-bottom: 2rem;">
+        <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600; color: var(--text-color); background-color: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem; font-family: 'Space Grotesk', sans-serif;">
             <input type="checkbox" id="native-only-toggle" style="width: 1.1rem; height: 1.1rem; accent-color: var(--accent-color); cursor: pointer;">
-            🐧 {t('toggle.native')}
+            <span>🐧 {t('toggle.native')}</span>
         </label>
         <div class="category-filters">
             <button class="category-btn active" data-category="home">{t('cat.home')}</button>
@@ -76,17 +76,17 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
     </div>
 
     <!-- Legend -->
-    <div style="margin-bottom: 2.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem; font-size: 0.9rem; color: var(--text-muted); padding: 0.75rem 1.5rem; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; max-width: max-content; margin-left: auto; margin-right: auto;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
+    <div style="margin-bottom: 3rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem; font-size: 0.85rem; color: var(--text-muted); padding: 0.75rem 1.5rem; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; max-width: max-content; margin-left: auto; margin-right: auto; box-shadow: var(--card-shadow); font-weight: 500;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
             <span>{t('legend.desc')} </span>
-            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(16, 185, 129, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                <i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em;" title="Native Linux Support"></i>
+            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: var(--bg-color); color: #10b981; padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; gap: 0.25rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; text-transform: uppercase;">
+                <i class="fa-brands fa-linux" style="font-size: 1.1em;"></i> Native
             </span>
         </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
             <span>{t('legend.webapp')} </span>
-            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(59, 130, 246, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.3);">
-                <svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82f6" style="vertical-align: middle;"><path d="M0 336c0 79.5 64.5 144 144 144h368c70.7 0 128-57.3 128-128 0-61.9-44-113.6-102.4-125.4C524.3 123 435.3 64 336 64c-82.4 0-153.8 40.7-196.7 102.8C59.9 176.4 0 249.2 0 336z"/></svg>
+            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: var(--bg-color); color: #3b82f6; padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.3); font-weight: 700; gap: 0.25rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; text-transform: uppercase;">
+                <i class="fa-solid fa-cloud" style="font-size: 1em;"></i> Web App
             </span>
         </div>
     </div>
@@ -94,23 +94,23 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
     <!-- Dashboard Layout Grid (Shown by default) -->
     <div id="dashboard-grid" class="dashboard-grid">
         <!-- Block 1: Recently Added -->
-        <div class="dashboard-col flat-block">
-            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">{t('recent.title')}</h2>
+        <div class="dashboard-col flat-block" style="border: 1px solid var(--border-color); background-color: var(--surface-color); border-radius: 8px; padding: 1.5rem;">
+            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.3rem; padding-bottom: 0.5rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">{t('recent.title')}</h2>
             <div class="col-list">
                  {recentlyAdded.map(app => (
                     <a href={`/app/${app.id}`} class="dashboard-item" data-native={app.linuxAlternative?.toLowerCase().includes('native') ? "true" : "false"} style="display: block; text-decoration: none;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
                             <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}{app.isWebApp && <span set:html={webAppSvg} />}</span>
                         </div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 500;">{t(`cat.${app.category.toLowerCase()}` as any) || app.category}</div>
                     </a>
                 ))}
             </div>
         </div>
 
         <!-- Block 2: Top Software -->
-        <div class="dashboard-col flat-block">
-            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">{t('top.title')}</h2>
+        <div class="dashboard-col flat-block" style="border: 1px solid var(--border-color); background-color: var(--surface-color); border-radius: 8px; padding: 1.5rem;">
+            <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.3rem; padding-bottom: 0.5rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">{t('top.title')}</h2>
             <div class="col-list" id="top-software-list">
                 {topApps.map((app, index) => (
                     <a href={`/app/${app.id}`}
@@ -122,13 +122,13 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
                             <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}{app.isWebApp && <span set:html={webAppSvg} />}</span>
                         </div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 500;">{t(`cat.${app.category.toLowerCase()}` as any) || app.category}</div>
                     </a>
                 ))}
             </div>
             {topApps.length > 10 && (
                 <div style="text-align: center; margin-top: 1.5rem;">
-                    <button id="load-more-top" class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); font-size: 0.9rem; padding: 0.6rem 2rem; cursor: pointer; border-radius: 6px; font-weight: 600;">
+                    <button id="load-more-top" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-color) !important; font-size: 0.9rem; padding: 0.5rem 1.5rem; cursor: pointer; border-radius: 8px; font-weight: 600; box-shadow: none;">
                         {t('btn.seeMore')} &darr;
                     </button>
                 </div>
@@ -137,9 +137,9 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
     </div>
 
     <!-- Filtered List Container (Hidden by default) -->
-    <div id="filtered-container" style="display: none;">
-        <h2 id="category-title" style="margin-bottom: 0.5rem; font-size: 1.75rem; color: var(--text-color);">Category</h2>
-        <p id="category-count" style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">Count</p>
+    <div id="filtered-container" style="display: none; background-color: var(--surface-color); border: 1px solid var(--border-color); padding: 2rem; border-radius: 8px; box-shadow: var(--card-shadow);">
+        <h2 id="category-title" style="margin-bottom: 0.5rem; font-size: 1.8rem; color: var(--text-color); font-family: 'Space Grotesk', sans-serif; font-weight: 750;">Category</h2>
+        <p id="category-count" style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 500;">Count</p>
         <div id="category-notice" style="display: none; background-color: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 8px; padding: 1.25rem 2rem; margin-bottom: 2rem;"></div>
         <div id="filtered-list" style="display: flex; flex-direction: column; gap: 1rem;">
             <!-- Rendered by client script -->
@@ -432,7 +432,7 @@ const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82
                         btnDiv.id = 'load-more-filtered';
                         btnDiv.style.cssText = 'text-align: center; margin-top: 1.5rem; margin-bottom: 2rem;';
                         btnDiv.innerHTML = `
-                            <button class="btn" style="background-color: rgba(255, 255, 255, 0.05); border-color: var(--border-color); font-size: 0.9rem; padding: 0.6rem 2rem; cursor: pointer; font-weight: 600; border-radius: 6px;">
+                            <button class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-color) !important; font-size: 0.9rem; padding: 0.5rem 1.5rem; cursor: pointer; border-radius: 8px; font-weight: 600; box-shadow: none;">
                                 ${tSeeMore} &darr;
                             </button>
                         `;
