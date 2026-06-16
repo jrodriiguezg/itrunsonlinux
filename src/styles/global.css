@@ -82,3 +82,103 @@ a {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
+
+/* Responsive container adjustments */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+/* Responsive Header layout */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: center;
+  }
+  .header-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+/* Universal Dashboard Grid (moved from index.astro for multi-page compatibility) */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  margin-top: 1rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Responsive Hero title styling */
+.hero-title {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.25rem;
+  }
+}
+
+/* Responsive App Title in detail pages */
+.app-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 1.85rem;
+  }
+}
+
+/* Responsive Filtered App Cards in search results */
+.filtered-app-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.25rem 2rem;
+  margin-bottom: 0.75rem;
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  border-radius: 8px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.filtered-app-card:hover {
+  border-color: var(--accent-color);
+  background-color: var(--surface-hover);
+}
+@media (max-width: 768px) {
+  .filtered-app-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+  }
+}

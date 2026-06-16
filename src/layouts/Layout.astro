@@ -32,9 +32,9 @@ const { title } = Astro.props;
 	</head>
 	<body>
         <header style="border-bottom: 1px solid var(--border-color); padding: 1.5rem 0; margin-bottom: 3rem;">
-            <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="container header-container">
                 <a href="/" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color);">ItRunsOnLinux</a>
-                <nav style="display: flex; align-items: center; gap: 1.5rem;">
+                <nav class="header-nav">
                     <a href="/tutorials" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">Tutorials</a>
                     <a href="/faq" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">FAQ & Guide</a>
                     <ThemeToggle />

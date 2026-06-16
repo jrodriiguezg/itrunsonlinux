@@ -23,7 +23,7 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
 
 <Layout title="ItRunsOnLinux - Switch to Linux with Confidence">
     <div style="text-align: center; margin-bottom: 3rem; margin-top: 2rem;">
-        <h1 style="font-size: 3.5rem; margin-bottom: 1rem; font-weight: 800; letter-spacing: -1px;">
+        <h1 class="hero-title">
             Switching to <span style="color: var(--accent-color);">Linux?</span>
         </h1>
         <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.6;">
@@ -162,14 +162,6 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
         color: #fff;
     }
 
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2.5rem;
-        margin-top: 1rem;
-        align-items: start;
-    }
-
     .dashboard-col {
         display: flex;
         flex-direction: column;
@@ -240,13 +232,6 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
     body.native-only .dashboard-item:not([data-native="true"]),
     body.native-only .flat-card:not([data-native="true"]) {
         display: none !important;
-    }
-
-    @media (max-width: 1024px) {
-        .dashboard-grid {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
     }
 
     @media (max-width: 768px) {
@@ -373,24 +358,8 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
 
                             const a = document.createElement('a');
                             a.href = `/app/${app.id}`;
-                            a.className = 'flat-card';
+                            a.className = 'filtered-app-card';
                             a.setAttribute('data-native', isNative ? "true" : "false");
-                            a.style.display = 'flex';
-                            a.style.justifyContent = 'space-between';
-                            a.style.alignItems = 'center';
-                            a.style.gap = '2rem';
-                            a.style.padding = '1.25rem 2rem';
-                            a.style.marginBottom = '0.75rem';
-                            a.style.textDecoration = 'none';
-                            
-                            a.onmouseover = () => {
-                                a.style.borderColor = 'var(--accent-color)';
-                                a.style.backgroundColor = 'var(--surface-hover)';
-                            };
-                            a.onmouseout = () => {
-                                a.style.borderColor = 'var(--border-color)';
-                                a.style.backgroundColor = 'var(--surface-color)';
-                            };
                             
                             a.innerHTML = `
                                 <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; text-align: left;">
@@ -399,15 +368,15 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
                                         <span style="font-size: 0.75rem; border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 4px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
                                             ${app.category}
                                         </span>
+                                    </div>
+                                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">
+                                        ${app.description}
+                                    </p>
                                 </div>
-                                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">
-                                    ${app.description}
-                                </p>
-                            </div>
-                            <div style="color: var(--accent-color); font-size: 0.95rem; font-weight: 600; white-space: nowrap;">
-                                View details &rarr;
-                            </div>
-                        `;
+                                <div style="color: var(--accent-color); font-size: 0.95rem; font-weight: 600; white-space: nowrap;">
+                                    View details &rarr;
+                                </div>
+                            `;
                         filteredList.appendChild(a);
                     });
 
