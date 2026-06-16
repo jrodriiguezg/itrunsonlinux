@@ -5,12 +5,16 @@ import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '../db/schema';
 import { env } from 'cloudflare:workers';
 import { desc, asc } from 'drizzle-orm';
+import { isWebApp } from '../utils/webapp';
 
 const db = drizzle(env.DB, { schema });
-const allApps = await db.select()
+const allApps = (await db.select()
   .from(schema.apps)
   .orderBy(desc(schema.apps.popularity), asc(schema.apps.name))
-  .all();
+  .all()).map(app => ({
+    ...app,
+    isWebApp: isWebApp(app)
+  }));
 
 // Filter 5 recently added apps (non-core apps by default, taking the first ones in the standard seed list)
 const recentlyAdded = allApps.filter(app => app.popularity === 0).slice(0, 5);
@@ -19,6 +23,7 @@ const recentlyAdded = allApps.filter(app => app.popularity === 0).slice(0, 5);
 const topApps = allApps.filter(app => app.popularity > 0);
 
 const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em; margin-left: 0.5rem; vertical-align: middle;" title="Native Linux Support"></i>`;
+const webAppSvg = `<svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82f6" style="vertical-align: middle; margin-left: 0.5rem; display: inline-block;" title="Official Web App / Cloud Version Available"><path d="M0 336c0 79.5 64.5 144 144 144h368c70.7 0 128-57.3 128-128 0-61.9-44-113.6-102.4-125.4C524.3 123 435.3 64 336 64c-82.4 0-153.8 40.7-196.7 102.8C59.9 176.4 0 249.2 0 336z"/></svg>`;
 ---
 
 <Layout title="ItRunsOnLinux - Switch to Linux with Confidence">
@@ -67,11 +72,19 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
     </div>
 
     <!-- Legend -->
-    <div style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); padding: 0.75rem 1rem; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; max-width: max-content; margin-left: auto; margin-right: auto;">
-        <span>Software with official native Linux support is marked with </span>
-        <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(16, 185, 129, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">
-            <i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em;" title="Native Linux Support"></i>
-        </span>
+    <div style="margin-bottom: 2.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem; font-size: 0.9rem; color: var(--text-muted); padding: 0.75rem 1.5rem; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; max-width: max-content; margin-left: auto; margin-right: auto;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span>Software with official native Linux support is marked with </span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(16, 185, 129, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <i class="fa-brands fa-linux" style="color: #10b981; font-size: 1.1em;" title="Native Linux Support"></i>
+            </span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span>Official Web App / Cloud version available is marked with </span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: rgba(59, 130, 246, 0.1); padding: 0.35rem 0.6rem; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                <svg viewBox="0 0 640 512" width="16" height="16" fill="#3b82f6" style="vertical-align: middle;"><path d="M0 336c0 79.5 64.5 144 144 144h368c70.7 0 128-57.3 128-128 0-61.9-44-113.6-102.4-125.4C524.3 123 435.3 64 336 64c-82.4 0-153.8 40.7-196.7 102.8C59.9 176.4 0 249.2 0 336z"/></svg>
+            </span>
+        </div>
     </div>
 
     <!-- Dashboard Layout Grid (Shown by default) -->
@@ -79,11 +92,10 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
         <!-- Block 1: Recently Added -->
         <div class="dashboard-col flat-block">
             <h2 class="col-title" style="color: var(--text-color); border-bottom: 1px solid var(--border-color);">Recently Added</h2>
-            <div class="col-list">
-                {recentlyAdded.map(app => (
+                 {recentlyAdded.map(app => (
                     <a href={`/app/${app.id}`} class="dashboard-item" data-native={app.linuxAlternative?.toLowerCase().includes('native') ? "true" : "false"} style="display: block; text-decoration: none;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-                            <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}</span>
+                            <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}{app.isWebApp && <span set:html={webAppSvg} />}</span>
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
                     </a>
@@ -103,7 +115,7 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
                         data-native={app.linuxAlternative?.toLowerCase().includes('native') ? "true" : "false"}
                     >
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
-                            <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}</span>
+                            <span class="app-link">{app.name}{app.linuxAlternative?.toLowerCase().includes('native') && <span set:html={penguinSvg} />}{app.isWebApp && <span set:html={webAppSvg} />}</span>
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{app.category}</div>
                     </a>
@@ -242,7 +254,7 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
     }
 </style>
 
-<script define:vars={{ apps: allApps, penguinSvg }}>
+<script define:vars={{ apps: allApps, penguinSvg, webAppSvg }}>
     const categoryButtons = document.querySelectorAll('.category-btn');
     const dashboardGrid = document.getElementById('dashboard-grid');
     const filteredContainer = document.getElementById('filtered-container');
@@ -355,6 +367,7 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
                         batch.forEach(app => {
                             const isNative = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native');
                             const nativeIconHtml = isNative ? penguinSvg : '';
+                            const webAppIconHtml = app.isWebApp ? webAppSvg : '';
 
                             const a = document.createElement('a');
                             a.href = `/app/${app.id}`;
@@ -364,7 +377,7 @@ const penguinSvg = `<i class="fa-brands fa-linux" style="color: #10b981; font-si
                             a.innerHTML = `
                                 <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; text-align: left;">
                                     <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                                        <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0;">${app.name}${nativeIconHtml}</h3>
+                                        <h3 style="color: var(--text-color); font-size: 1.25rem; font-weight: 700; margin: 0;">${app.name}${nativeIconHtml}${webAppIconHtml}</h3>
                                         <span style="font-size: 0.75rem; border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 4px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
                                             ${app.category}
                                         </span>

@@ -1,16 +1,19 @@
 ---
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import { getLanguage, useTranslations } from '../i18n';
 
 interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Find out if your favorite software works on Linux" />
@@ -35,10 +38,14 @@ const { title } = Astro.props;
             <div class="container header-container">
                 <a href="/" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color);">ItRunsOnLinux</a>
                 <nav class="header-nav">
-                    <a href="/tutorials" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">Tutorials</a>
-                    <a href="/faq" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">FAQ & Guide</a>
+                    <a href="/tutorials" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">{t('nav.tutorials')}</a>
+                    <a href="/faq" style="color: var(--text-color); font-weight: 600; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-color)'">{t('nav.faq')}</a>
                     <ThemeToggle />
-                    <a href="https://github.com/jrodriiguezg/itrunsonlinux/issues/new?title=[App+Suggestion]%20App%20Name&body=Please%20add%20the%20following%20application%3A%0A%0A**Name**%3A%20%0A**Category**%3A%20%0A**Description**%3A%20" target="_blank" class="btn">Suggest Software</a>
+                    <button id="lang-toggle-btn" style="background: none; border: 1px solid var(--border-color); color: var(--text-color); cursor: pointer; padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;" title={lang === 'en' ? 'Cambiar a Español' : 'Switch to English'}>
+                        <i class="fa-solid fa-globe"></i>
+                        {lang === 'en' ? 'ES' : 'EN'}
+                    </button>
+                    <a href="https://github.com/jrodriiguezg/itrunsonlinux/issues/new?title=[App+Suggestion]%20App%20Name&body=Please%20add%20the%20following%20application%3A%0A%0A**Name**%3A%20%0A**Category**%3A%20%0A**Description**%3A%20" target="_blank" class="btn">{t('nav.suggest')}</a>
                 </nav>
             </div>
         </header>
@@ -46,8 +53,19 @@ const { title } = Astro.props;
 		    <slot />
         </main>
         <footer style="text-align: center; margin-top: 5rem; padding: 2rem 0; border-top: 1px solid var(--border-color); color: var(--text-muted); display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
-            <p>Built by <a href="https://jrodriiguezg.link" target="_blank" style="color: var(--accent-color); text-decoration: underline;">jrodriiguezg.link</a> for the community.</p>
-            <p style="font-size: 0.9rem;"><a href="/faq" style="color: var(--accent-color); font-weight: 600;">Read the Linux Compatibility Guide &rarr;</a></p>
+            <p>{t('footer.built')} <a href="https://jrodriiguezg.link" target="_blank" style="color: var(--accent-color); text-decoration: underline;">jrodriiguezg.link</a> {t('footer.forCommunity')}</p>
+            <p style="font-size: 0.9rem;"><a href="/faq" style="color: var(--accent-color); font-weight: 600;">{t('footer.guideLink')} &rarr;</a></p>
         </footer>
+
+        <script define:vars={{ currentLang: lang }}>
+            document.getElementById('lang-toggle-btn')?.addEventListener('click', () => {
+                const nextLang = currentLang === 'en' ? 'es' : 'en';
+                document.cookie = `lang=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+                
+                const url = new URL(window.location.href);
+                url.searchParams.set('lang', nextLang);
+                window.location.href = url.pathname + url.search;
+            });
+        </script>
 	</body>
 </html>
