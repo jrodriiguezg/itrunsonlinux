@@ -28,10 +28,10 @@ const allApps = (await db.select().from(schema.apps).all()).map(app => ({
     
     <!-- Search Filter Pills -->
     <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: center; flex-wrap: wrap;">
-        <button type="button" class="search-pill active" data-filter="all">🔍 {lang === 'en' ? 'All' : 'Todo'}</button>
-        <button type="button" class="search-pill" data-filter="native">🐧 {lang === 'en' ? 'Native' : 'Nativo'}</button>
-        <button type="button" class="search-pill" data-filter="webapp">☁️ Web Apps</button>
-        <button type="button" class="search-pill" data-filter="wine">⚙️ Wine / Proton</button>
+        <button type="button" class="search-pill active" data-filter="all"> {lang === 'en' ? 'All' : 'Todo'}</button>
+        <button type="button" class="search-pill" data-filter="native"> {lang === 'en' ? 'Native' : 'Nativo'}</button>
+        <button type="button" class="search-pill" data-filter="webapp"> Web Apps</button>
+        <button type="button" class="search-pill" data-filter="wine"> Wine / Proton</button>
     </div>
     
     <div 
