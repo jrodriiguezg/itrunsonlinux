@@ -1,0 +1,209 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../db/schema';
+import { env } from 'cloudflare:workers';
+import { desc, asc } from 'drizzle-orm';
+import { isWebApp } from '../utils/webapp';
+import { getLanguage, useTranslations } from '../i18n';
+
+const db = drizzle(env.DB, { schema });
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
+
+const allApps = (await db.select()
+  .from(schema.apps)
+  .orderBy(desc(schema.apps.popularity), asc(schema.apps.name))
+  .all()).map(app => ({
+    ...app,
+    isWebApp: isWebApp(app)
+  }));
+
+const penguinSvg = `<span style="display:inline-flex;align-items:center;justify-content:center;background-color:var(--bg-color);color:#10b981;padding:0.15rem 0.4rem;border-radius:6px;border:1px solid rgba(16,185,129,0.3);font-weight:700;font-family:'Space Grotesk',sans-serif;font-size:0.65rem;text-transform:uppercase;margin-left:0.5rem;"><i class="fa-brands fa-linux"></i> Native</span>`;
+const webAppSvg = `<span style="display:inline-flex;align-items:center;justify-content:center;background-color:var(--bg-color);color:#3b82f6;padding:0.15rem 0.4rem;border-radius:6px;border:1px solid rgba(59,130,246,0.3);font-weight:700;font-family:'Space Grotesk',sans-serif;font-size:0.65rem;text-transform:uppercase;margin-left:0.5rem;"><i class="fa-solid fa-cloud"></i> Web App</span>`;
+---
+
+<Layout title={lang === 'en' ? "Explore Software - ItRunsOnLinux" : "Explorar Software - ItRunsOnLinux"}>
+    <Breadcrumb items={[
+      { label: t('breadcrumb.home'), href: '/' },
+      { label: lang === 'en' ? 'Explore' : 'Explorar' }
+    ]} />
+
+    <div style="text-align: center; margin-bottom: 2rem; margin-top: 1rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; margin-bottom: 0.75rem;">
+            {lang === 'en' ? 'Explore Software' : 'Explorar Software'}
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+            {lang === 'en' 
+              ? `Browse ${allApps.length} applications by category and compatibility.`
+              : `Explora ${allApps.length} aplicaciones por categoría y compatibilidad.`}
+        </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 1.25rem; margin-bottom: 2rem;">
+        <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600; color: var(--text-color); background-color: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem; font-family: 'Space Grotesk', sans-serif;">
+            <input type="checkbox" id="native-only-toggle" style="width: 1.1rem; height: 1.1rem; accent-color: var(--accent-color); cursor: pointer;">
+            <span>{t('toggle.native')}</span>
+        </label>
+        <div class="category-filters">
+            <button class="category-btn active" data-category="all">{t('cat.all')}</button>
+            <button class="category-btn" data-category="Design">{t('cat.design')}</button>
+            <button class="category-btn" data-category="Office">{t('cat.office')}</button>
+            <button class="category-btn" data-category="Games">{t('cat.games')}</button>
+            <button class="category-btn" data-category="Social">{t('cat.social')}</button>
+            <button class="category-btn" data-category="Development">{t('cat.development')}</button>
+            <button class="category-btn" data-category="Audio">{t('cat.audio')}</button>
+            <button class="category-btn" data-category="Utilities">{t('cat.utilities')}</button>
+            <button class="category-btn" data-category="Windows Integrated">{t('cat.winIntegrated')}</button>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem; font-size: 0.85rem; color: var(--text-muted); padding: 0.75rem 1.5rem; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; max-width: max-content; margin-left: auto; margin-right: auto; box-shadow: var(--card-shadow); font-weight: 500;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+            <span>{t('legend.desc')} </span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: var(--bg-color); color: #10b981; padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; text-transform: uppercase;">
+                <i class="fa-brands fa-linux"></i> Native
+            </span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+            <span>{t('legend.webapp')} </span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: var(--bg-color); color: #3b82f6; padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.3); font-weight: 700; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; text-transform: uppercase;">
+                <i class="fa-solid fa-cloud"></i> Web App
+            </span>
+        </div>
+    </div>
+
+    <p id="category-count" style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 500;"></p>
+
+    <div id="category-notice" style="display: none; background-color: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 8px; padding: 1.25rem 2rem; margin-bottom: 2rem;"></div>
+
+    <div id="filtered-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+
+    <div id="load-more-wrap" style="text-align: center; margin-top: 2rem; display: none;">
+        <button id="load-more-btn" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-color) !important; font-size: 0.9rem; padding: 0.5rem 1.5rem; cursor: pointer; border-radius: 8px; font-weight: 600; box-shadow: none;">
+            {t('btn.seeMore')} &darr;
+        </button>
+    </div>
+</Layout>
+
+<style>
+    .category-filters {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    .category-btn {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        padding: 0.5rem 1.25rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .category-btn:hover { border-color: var(--accent-color); color: var(--text-color); }
+    .category-btn.active { background-color: var(--accent-color); border-color: var(--accent-color); color: #fff; }
+    body.native-only .filtered-app-card:not([data-native="true"]) { display: none !important; }
+</style>
+
+<script define:vars={{
+    apps: allApps,
+    penguinSvg,
+    webAppSvg,
+    tAllSoftware: t('cat.all'),
+    tGamesNoticeTitle: t('games.notice.title'),
+    tGamesNoticeDesc1: t('games.notice.desc1'),
+    tGamesNoticeDesc2: t('games.notice.desc2'),
+    tNoSoftware: t('no.software'),
+    tSeeMore: t('btn.seeMore'),
+    tViewDetails: t('app.details'),
+    tFoundSuffix: t('cat.found'),
+    tCategories: {
+        'all': t('cat.all'),
+        'Design': t('cat.design'),
+        'Office': t('cat.office'),
+        'Games': t('cat.games'),
+        'Social': t('cat.social'),
+        'Development': t('cat.development'),
+        'Audio': t('cat.audio'),
+        'Utilities': t('cat.utilities'),
+        'Windows Integrated': t('cat.winIntegrated')
+    }
+}}>
+    const filteredList = document.getElementById('filtered-list');
+    const categoryCount = document.getElementById('category-count');
+    const categoryNotice = document.getElementById('category-notice');
+    const loadMoreWrap = document.getElementById('load-more-wrap');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const nativeOnlyToggle = document.getElementById('native-only-toggle');
+    let currentFiltered = [];
+    let visibleCount = 10;
+
+    function renderBatch() {
+        const batch = currentFiltered.slice(visibleCount - 10, visibleCount);
+        batch.forEach(app => {
+            const isNative = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native');
+            const a = document.createElement('a');
+            a.href = '/app/' + app.id;
+            a.className = 'filtered-app-card';
+            a.setAttribute('data-native', isNative ? 'true' : 'false');
+            a.innerHTML = '<div style="display:flex;flex-direction:column;gap:0.25rem;flex:1;text-align:left;"><div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;"><h3 style="color:var(--text-color);font-size:1.1rem;font-weight:700;margin:0;">' + app.name + (isNative ? penguinSvg : '') + (app.isWebApp ? webAppSvg : '') + '</h3><span style="font-size:0.7rem;border:1px solid var(--border-color);padding:0.15rem 0.5rem;border-radius:4px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">' + (tCategories[app.category] || app.category) + '</span></div><p style="color:var(--text-muted);font-size:0.85rem;line-height:1.5;margin:0;">' + app.description + '</p></div><div style="color:var(--accent-color);font-size:0.9rem;font-weight:600;white-space:nowrap;">' + tViewDetails + ' &rarr;</div>';
+            filteredList.appendChild(a);
+        });
+        loadMoreWrap.style.display = visibleCount < currentFiltered.length ? 'block' : 'none';
+    }
+
+    function filterApps(category) {
+        filteredList.innerHTML = '';
+        visibleCount = 10;
+        let filtered = [];
+        if (category === 'all') {
+            filtered = [...apps].sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+            filtered = apps.filter(app => app.category === category);
+        }
+        if (nativeOnlyToggle && nativeOnlyToggle.checked) {
+            filtered = filtered.filter(app => app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native'));
+        }
+        currentFiltered = filtered;
+        categoryCount.textContent = filtered.length + ' ' + tFoundSuffix;
+
+        if (category === 'Games') {
+            categoryNotice.style.display = 'block';
+            categoryNotice.innerHTML = '<strong style="color:var(--text-color);">' + tGamesNoticeTitle + '</strong> <span style="color:var(--text-muted);">' + tGamesNoticeDesc1 + ' <a href="https://www.protondb.com" target="_blank" style="color:var(--accent-color);font-weight:700;text-decoration:underline;">ProtonDB</a>' + tGamesNoticeDesc2 + '</span>';
+        } else {
+            categoryNotice.style.display = 'none';
+        }
+
+        if (filtered.length > 0) {
+            renderBatch();
+        } else {
+            filteredList.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted);">' + tNoSoftware + '</div>';
+        }
+    }
+
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterApps(btn.getAttribute('data-category'));
+        });
+    });
+
+    nativeOnlyToggle.addEventListener('change', () => {
+        const active = document.querySelector('.category-btn.active');
+        if (active) filterApps(active.getAttribute('data-category'));
+    });
+
+    loadMoreBtn.addEventListener('click', () => {
+        visibleCount += 10;
+        renderBatch();
+    });
+
+    // Show all apps on load
+    filterApps('all');
+</script>

@@ -1,0 +1,279 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../db/schema';
+import { env } from 'cloudflare:workers';
+import { sql, desc } from 'drizzle-orm';
+import { isWebApp } from '../utils/webapp';
+import { getLanguage, useTranslations } from '../i18n';
+
+const db = drizzle(env.DB, { schema });
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
+
+const allApps = (await db.select().from(schema.apps).all()).map(app => ({
+  ...app,
+  isWebApp: isWebApp(app),
+  isNative: app.linuxAlternative?.toLowerCase().includes('native') || false
+}));
+
+const totalApps = allApps.length;
+const nativeCount = allApps.filter(a => a.isNative).length;
+const webAppCount = allApps.filter(a => a.isWebApp).length;
+const wineCount = totalApps - nativeCount - webAppCount;
+
+const categories: Record<string, number> = {};
+allApps.forEach(app => {
+  categories[app.category] = (categories[app.category] || 0) + 1;
+});
+
+const sortedCategories = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+
+const nativePercent = Math.round((nativeCount / totalApps) * 100);
+const webAppPercent = Math.round((webAppCount / totalApps) * 100);
+const winePercent = 100 - nativePercent - webAppPercent;
+---
+
+<Layout title={lang === 'en' ? "Statistics - ItRunsOnLinux" : "Estadísticas - ItRunsOnLinux"}>
+    <Breadcrumb items={[
+      { label: t('breadcrumb.home'), href: '/' },
+      { label: lang === 'en' ? 'Statistics' : 'Estadísticas' }
+    ]} />
+
+    <div style="text-align: center; margin-bottom: 3rem; margin-top: 1rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; margin-bottom: 0.75rem;">
+            {lang === 'en' ? 'Database Statistics' : 'Estadísticas de la Base de Datos'}
+        </h1>
+    </div>
+
+    <div class="stats-grid">
+        <!-- Compatibility Pie Chart -->
+        <div class="stats-card">
+            <h2 class="stats-card-title">{lang === 'en' ? 'Compatibility Overview' : 'Resumen de Compatibilidad'}</h2>
+            <div class="pie-container">
+                <svg viewBox="0 0 200 200" class="pie-chart">
+                    <!-- Native slice -->
+                    <circle cx="100" cy="100" r="80" fill="transparent" 
+                            stroke="#10b981" stroke-width="40"
+                            stroke-dasharray={`${nativePercent * 5.026} ${502.6 - nativePercent * 5.026}`}
+                            stroke-dashoffset="125.65"
+                            class="pie-slice" />
+                    <!-- Web App slice -->
+                    <circle cx="100" cy="100" r="80" fill="transparent" 
+                            stroke="#3b82f6" stroke-width="40"
+                            stroke-dasharray={`${webAppPercent * 5.026} ${502.6 - webAppPercent * 5.026}`}
+                            stroke-dashoffset={`${125.65 - nativePercent * 5.026}`}
+                            class="pie-slice" />
+                    <!-- Wine slice -->
+                    <circle cx="100" cy="100" r="80" fill="transparent" 
+                            stroke="#f59e0b" stroke-width="40"
+                            stroke-dasharray={`${winePercent * 5.026} ${502.6 - winePercent * 5.026}`}
+                            stroke-dashoffset={`${125.65 - (nativePercent + webAppPercent) * 5.026}`}
+                            class="pie-slice" />
+                </svg>
+                <div class="pie-center">
+                    <span class="pie-total">{totalApps}</span>
+                    <span class="pie-label">{lang === 'en' ? 'Total Apps' : 'Total Apps'}</span>
+                </div>
+            </div>
+            <div class="pie-legend">
+                <div class="legend-item">
+                    <span class="legend-dot" style="background-color: #10b981;"></span>
+                    <span class="legend-label">Native ({nativeCount})</span>
+                    <span class="legend-percent">{nativePercent}%</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background-color: #3b82f6;"></span>
+                    <span class="legend-label">Web Apps ({webAppCount})</span>
+                    <span class="legend-percent">{webAppPercent}%</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background-color: #f59e0b;"></span>
+                    <span class="legend-label">Wine/Proton ({wineCount})</span>
+                    <span class="legend-percent">{winePercent}%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Bar Chart -->
+        <div class="stats-card">
+            <h2 class="stats-card-title">{lang === 'en' ? 'Apps by Category' : 'Apps por Categoría'}</h2>
+            <div class="bar-chart">
+                {sortedCategories.map(([cat, count]) => {
+                    const percent = Math.round((count / totalApps) * 100);
+                    const catKey = `cat.${cat.toLowerCase()}` as any;
+                    const catLabel = t(catKey) || cat;
+                    return (
+                        <a href={`/category/${encodeURIComponent(cat)}`} class="bar-row">
+                            <span class="bar-label">{catLabel}</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style={`width: ${percent}%;`}></div>
+                            </div>
+                            <span class="bar-value">{count}</span>
+                        </a>
+                    );
+                })}
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .stats-card {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .stats-card-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .pie-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 1.5rem auto;
+    }
+
+    .pie-chart {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+
+    .pie-slice {
+        transition: opacity 0.2s ease;
+    }
+
+    .pie-slice:hover {
+        opacity: 0.8;
+    }
+
+    .pie-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .pie-total {
+        display: block;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-color);
+    }
+
+    .pie-label {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .pie-legend {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .legend-label {
+        flex: 1;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .legend-percent {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--accent-color);
+    }
+
+    .bar-chart {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: var(--text-color);
+        padding: 0.3rem 0;
+        transition: opacity 0.15s ease;
+    }
+
+    .bar-row:hover { opacity: 0.8; }
+
+    .bar-label {
+        width: 120px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        text-align: right;
+        flex-shrink: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .bar-track {
+        flex: 1;
+        height: 20px;
+        background-color: var(--bg-color);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background-color: var(--accent-color);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+
+    .bar-value {
+        width: 35px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+</style>

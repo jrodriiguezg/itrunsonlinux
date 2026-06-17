@@ -1,0 +1,241 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../../db/schema';
+import { env } from 'cloudflare:workers';
+import { eq, desc, asc, sql } from 'drizzle-orm';
+import { isWebApp } from '../../utils/webapp';
+import { getLanguage, useTranslations } from '../../i18n';
+
+const { name } = Astro.params;
+if (!name) return Astro.redirect('/');
+
+const db = drizzle(env.DB, { schema });
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
+
+// Decode URL-encoded category name
+const categoryName = decodeURIComponent(name);
+
+const apps = (await db.select()
+  .from(schema.apps)
+  .where(eq(schema.apps.category, categoryName))
+  .orderBy(desc(schema.apps.popularity), asc(schema.apps.name))
+  .all()).map((app, index) => ({
+    ...app,
+    isWebApp: isWebApp(app),
+    rank: index + 1
+  }));
+
+if (apps.length === 0) return Astro.redirect('/');
+
+const nativeCount = apps.filter(a => a.linuxAlternative?.toLowerCase().includes('native')).length;
+const webAppCount = apps.filter(a => a.isWebApp).length;
+const wineCount = apps.length - nativeCount - webAppCount;
+
+const categoryKey = `cat.${categoryName.toLowerCase()}` as any;
+const categoryTitle = t(categoryKey) || categoryName;
+---
+
+<Layout title={`${categoryTitle} - ItRunsOnLinux`}>
+    <Breadcrumb items={[
+      { label: t('breadcrumb.home'), href: '/' },
+      { label: categoryTitle }
+    ]} />
+
+    <div style="text-align: center; margin-bottom: 3rem; margin-top: 1rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; margin-bottom: 0.75rem;">
+            {categoryTitle}
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+            {lang === 'en' 
+              ? `${apps.length} applications in this category`
+              : `${apps.length} aplicaciones en esta categoría`}
+        </p>
+    </div>
+
+    <div class="category-stats">
+        <div class="stat-pill stat-native">
+            <i class="fa-brands fa-linux"></i> {nativeCount} {lang === 'en' ? 'Native' : 'Nativas'}
+        </div>
+        <div class="stat-pill stat-webapp">
+            <i class="fa-solid fa-cloud"></i> {webAppCount} Web Apps
+        </div>
+        <div class="stat-pill stat-wine">
+            <i class="fa-solid fa-wine-glass"></i> {wineCount} Wine/Proton
+        </div>
+    </div>
+
+    <div id="category-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        {apps.slice(0, 30).map(app => {
+            const isNative = app.linuxAlternative?.toLowerCase().includes('native');
+            return (
+                <a href={`/app/${app.id}`} class="category-item">
+                    <span class="item-rank">#{app.rank}</span>
+                    <div class="item-info">
+                        <span class="item-name">
+                            {app.name}
+                            {isNative && <span class="badge-native"><i class="fa-brands fa-linux"></i> Native</span>}
+                            {app.isWebApp && <span class="badge-webapp"><i class="fa-solid fa-cloud"></i> Web App</span>}
+                        </span>
+                        <span class="item-desc">{app.description}</span>
+                    </div>
+                    <div class="item-votes">
+                        <span class="vote-icon">▲</span>
+                        <span class="vote-count">{app.popularity || 0}</span>
+                    </div>
+                </a>
+            );
+        })}
+    </div>
+
+    {apps.length > 30 && (
+        <div style="text-align: center; margin-top: 2rem;">
+            <button id="load-more-cat" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-color) !important;">
+                {t('btn.seeMore')} ↓
+            </button>
+        </div>
+    )}
+</Layout>
+
+<style>
+    .category-stats {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        border: 1px solid var(--border-color);
+        background-color: var(--surface-color);
+    }
+
+    .stat-native { color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
+    .stat-webapp { color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
+    .stat-wine { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+
+    .category-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--text-color);
+        transition: all 0.15s ease;
+    }
+
+    .category-item:hover {
+        border-color: var(--accent-color);
+        transform: translateX(4px);
+    }
+
+    .item-rank {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        min-width: 30px;
+    }
+
+    .item-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        min-width: 0;
+    }
+
+    .item-name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .item-desc {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .item-votes {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.25rem 0.5rem;
+        background-color: var(--bg-color);
+        border-radius: 6px;
+        flex-shrink: 0;
+    }
+
+    .vote-icon {
+        color: var(--accent-color);
+        font-size: 0.7rem;
+    }
+
+    .vote-count {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .badge-native {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge-webapp {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+</style>
+
+<script>
+    let visibleCount = 30;
+    const loadMoreBtn = document.getElementById('load-more-cat');
+    const allItems = document.querySelectorAll('.category-item');
+    
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            const end = Math.min(visibleCount + 30, allItems.length);
+            for (let i = visibleCount; i < end; i++) {
+                (allItems[i] as HTMLElement).style.display = 'flex';
+            }
+            visibleCount = end;
+            if (visibleCount >= allItems.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        });
+    }
+</script>

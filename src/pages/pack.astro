@@ -1,0 +1,487 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../db/schema';
+import { env } from 'cloudflare:workers';
+import { desc, asc } from 'drizzle-orm';
+import { getLanguage, useTranslations } from '../i18n';
+
+const db = drizzle(env.DB, { schema });
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
+
+const allApps = (await db.select()
+  .from(schema.apps)
+  .orderBy(desc(schema.apps.popularity), asc(schema.apps.name))
+  .all()).map(app => ({
+    id: app.id,
+    name: app.name,
+    category: app.category,
+    flatpakId: app.linuxAlternative?.match(/flathub:([^\s/|]+)/)?.[1] || null
+  }));
+
+const nativeFlatpakApps = allApps.filter(a => a.flatpakId);
+const appsJson = JSON.stringify(nativeFlatpakApps);
+---
+
+<Layout title={lang === 'en' ? "Custom Linux Pack - ItRunsOnLinux" : "Pack Personalizado de Linux - ItRunsOnLinux"}>
+    <Breadcrumb items={[
+      { label: t('breadcrumb.home'), href: '/' },
+      { label: lang === 'en' ? 'Pack Generator' : 'Generador de Pack' }
+    ]} />
+
+    <div style="text-align: center; margin-bottom: 2rem; margin-top: 1rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; margin-bottom: 0.75rem;">
+            {lang === 'en' ? 'Linux Pack Generator' : 'Generador de Pack de Linux'}
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 650px; margin: 0 auto;">
+            {lang === 'en' 
+              ? 'Select the Windows apps you use and get a custom installation script for Linux.'
+              : 'Selecciona las apps de Windows que usas y obtén un script de instalación personalizado para Linux.'}
+        </p>
+    </div>
+
+    <div class="pack-info-banner">
+        <i class="fa-brands fa-linux" style="font-size: 1.2rem;"></i>
+        <div>
+            <strong>{lang === 'en' ? 'Graphical installer with zenity' : 'Instalador gráfico con zenity'}</strong>
+            <span>{lang === 'en' 
+              ? ' - The script uses a graphical interface. It will ask for your password and show a progress bar. No terminal knowledge needed!'
+              : ' - El script usa una interfaz gráfica. Te pedirá tu contraseña y mostrará una barra de progreso. ¡No necesitas saber usar la terminal!'}</span>
+        </div>
+    </div>
+
+    <div class="pack-steps">
+        <div class="pack-step">
+            <span class="pack-step-num">1</span>
+            <div>
+                <strong>{lang === 'en' ? 'Download the script' : 'Descarga el script'}</strong>
+                <span>{lang === 'en' ? ' - Click the Download button' : ' - Haz clic en el botón Descargar'}</span>
+            </div>
+        </div>
+        <div class="pack-step">
+            <span class="pack-step-num">2</span>
+            <div>
+                <strong>{lang === 'en' ? 'Double-click the file' : 'Haz doble clic en el archivo'}</strong>
+                <span>{lang === 'en' ? ' - On most Linux desktops, a dialog will ask to run it' : ' - En la mayoría de escritorios Linux, aparecerá un diálogo para ejecutarlo'}</span>
+            </div>
+        </div>
+        <div class="pack-step">
+            <span class="pack-step-num">3</span>
+            <div>
+                <strong>{lang === 'en' ? 'Click "Run in Terminal"' : 'Haz clic en "Ejecutar en Terminal"'}</strong>
+                <span>{lang === 'en' ? ' - The graphical installer will guide you through everything' : ' - El instalador gráfico te guiará paso a paso'}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="pack-layout">
+        <div class="pack-selector">
+            <div style="margin-bottom: 1rem; position: relative;">
+                <input type="text" id="pack-search" class="pack-search-input" 
+                       placeholder={lang === 'en' ? 'Search apps to add...' : 'Buscar apps para agregar...'} autocomplete="off" />
+                <div id="pack-suggestions" class="pack-suggestions"></div>
+            </div>
+            <div id="pack-app-list" class="pack-app-list"></div>
+        </div>
+
+        <div class="pack-output">
+            <div class="pack-output-header">
+                <h3>{lang === 'en' ? 'Installation Script' : 'Script de Instalación'}</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <select id="pack-distro" class="pack-distro-select">
+                        <option value="ubuntu">Ubuntu / Debian</option>
+                        <option value="fedora">Fedora</option>
+                        <option value="arch">Arch / Manjaro</option>
+                    </select>
+                    <button id="copy-btn" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                        <i class="fa-solid fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+            <pre id="pack-script" class="pack-script"># Select apps to generate an installation script</pre>
+        </div>
+    </div>
+</Layout>
+
+<script is:inline set:html={'var PACK_APPS = ' + appsJson + ';'}></script>
+
+<script is:inline>
+    var searchInput = document.getElementById('pack-search');
+    var suggestionsDiv = document.getElementById('pack-suggestions');
+    var appList = document.getElementById('pack-app-list');
+    var scriptOutput = document.getElementById('pack-script');
+    var distroSelect = document.getElementById('pack-distro');
+    var copyBtn = document.getElementById('copy-btn');
+    var selectedApps = {};
+
+    function renderAppList() {
+        var keys = Object.keys(selectedApps);
+        if (keys.length === 0) {
+            appList.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">No apps selected yet</div>';
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < keys.length; i++) {
+            var app = selectedApps[keys[i]];
+            html += '<label class="pack-app-item selected">';
+            html += '<input type="checkbox" class="pack-checkbox" checked />';
+            html += '<span class="pack-app-name">' + app.name + '</span>';
+            html += '<span class="pack-app-cat">' + app.category + '</span>';
+            html += '</label>';
+        }
+        appList.innerHTML = html;
+    }
+
+    renderAppList();
+
+    function showSuggestions(query) {
+        if (!query || query.length < 2) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        var matches = PACK_APPS.filter(function(a) {
+            return a.name.toLowerCase().indexOf(query) !== -1;
+        }).slice(0, 5);
+
+        if (matches.length === 0) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < matches.length; i++) {
+            var app = matches[i];
+            var alreadySelected = selectedApps[app.id];
+            html += '<div class="pack-suggestion-item' + (alreadySelected ? ' already-selected' : '') + '" data-id="' + app.id + '" data-name="' + app.name + '" data-category="' + app.category + '" data-flatpak="' + (app.flatpakId || '') + '">';
+            html += '<span class="suggestion-name">' + app.name + '</span>';
+            html += '<span class="suggestion-cat">' + app.category + '</span>';
+            if (alreadySelected) html += '<span class="suggestion-check"><i class="fa-solid fa-check"></i></span>';
+            html += '</div>';
+        }
+        suggestionsDiv.innerHTML = html;
+        suggestionsDiv.style.display = 'block';
+    }
+
+    searchInput.addEventListener('input', function(e) {
+        showSuggestions(e.target.value.toLowerCase().trim());
+    });
+
+    suggestionsDiv.addEventListener('click', function(e) {
+        var item = e.target.closest('.pack-suggestion-item');
+        if (!item || item.classList.contains('already-selected')) return;
+        var id = item.dataset.id;
+        selectedApps[id] = {
+            name: item.dataset.name,
+            category: item.dataset.category,
+            flatpakId: item.dataset.flatpak
+        };
+        searchInput.value = '';
+        suggestionsDiv.style.display = 'none';
+        renderAppList();
+        generateScript();
+    });
+
+    appList.addEventListener('change', function(e) {
+        if (e.target.type !== 'checkbox') return;
+        var item = e.target.closest('.pack-app-item');
+        if (!item) return;
+        if (!e.target.checked) {
+            var keys = Object.keys(selectedApps);
+            for (var i = 0; i < keys.length; i++) {
+                if (selectedApps[keys[i]].name === item.querySelector('.pack-app-name').textContent) {
+                    delete selectedApps[keys[i]];
+                    break;
+                }
+            }
+        }
+        renderAppList();
+        generateScript();
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+
+    distroSelect.addEventListener('change', generateScript);
+
+    function generateScript() {
+        var keys = Object.keys(selectedApps);
+        if (keys.length === 0) {
+            scriptOutput.textContent = '# Select apps to generate an installation script';
+            return;
+        }
+        var distro = distroSelect.value;
+        var appList = '';
+        var appCount = keys.length;
+        for (var i = 0; i < keys.length; i++) {
+            var app = selectedApps[keys[i]];
+            appList += '    ' + app.flatpakId + '\n';
+        }
+
+        var s = '#!/bin/bash\n';
+        s += '# ItRunsOnLinux - Custom Installation Pack\n';
+        s += '# Generated: ' + new Date().toISOString().split('T')[0] + '\n';
+        s += '# This script uses a graphical interface (zenity)\n';
+        s += '# If zenity is not installed, it will install it first\n\n';
+        s += 'set -e\n\n';
+
+        // Check and install zenity
+        s += '# Step 1: Install zenity if not present (for graphical dialogs)\n';
+        s += 'if ! command -v zenity &> /dev/null; then\n';
+        s += '    echo "Installing zenity for graphical interface..."\n';
+        if (distro === 'ubuntu') {
+            s += '    sudo apt-get update -qq && sudo apt-get install -y -qq zenity\n';
+        } else if (distro === 'fedora') {
+            s += '    sudo dnf install -y zenity\n';
+        } else if (distro === 'arch') {
+            s += '    sudo pacman -S --noconfirm zenity\n';
+        }
+        s += 'fi\n\n';
+
+        // Confirm dialog
+        s += '# Step 2: Ask user to confirm\n';
+        s += 'zenity --question --title="ItRunsOnLinux Pack Installer" \\\n';
+        s += '    --text="This will install ' + appCount + ' application(s) via Flatpak:\\n\\n';
+        for (var i = 0; i < keys.length; i++) {
+            var app = selectedApps[keys[i]];
+            s += '  - ' + app.name + '\\n';
+        }
+        s += '\\nDo you want to continue?" \\\n';
+        s += '    --ok-label="Install" --cancel-label="Cancel" 2>/dev/null\n\n';
+        s += 'if [ $? -ne 0 ]; then\n';
+        s += '    zenity --info --title="Cancelled" --text="Installation cancelled by user." --width=300 2>/dev/null\n';
+        s += '    exit 0\n';
+        s += 'fi\n\n';
+
+        // Progress bar
+        s += '# Step 3: Install Flatpak and apps with progress bar\n';
+        s += '(\n';
+        s += '    echo "5"\n';
+        s += '    echo "# Checking Flatpak..."\n';
+        s += '    \n';
+        s += '    # Install Flatpak if not present\n';
+        s += '    if ! command -v flatpak &> /dev/null; then\n';
+        s += '        echo "10"\n';
+        s += '        echo "# Installing Flatpak..."\n';
+        if (distro === 'ubuntu') {
+            s += '        sudo apt-get update -qq 2>/dev/null\n';
+            s += '        sudo apt-get install -y -qq flatpak 2>/dev/null\n';
+        } else if (distro === 'fedora') {
+            s += '        sudo dnf install -y flatpak 2>/dev/null\n';
+        } else if (distro === 'arch') {
+            s += '        sudo pacman -S --noconfirm flatpak 2>/dev/null\n';
+        }
+        s += '    fi\n';
+        s += '    \n';
+        s += '    echo "20"\n';
+        s += '    echo "# Adding Flathub repository..."\n';
+        s += '    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo 2>/dev/null\n';
+        s += '    \n';
+
+        // Install each app with progress
+        var stepSize = 70 / keys.length;
+        for (var i = 0; i < keys.length; i++) {
+            var app = selectedApps[keys[i]];
+            var progress = Math.round(30 + (stepSize * i));
+            s += '    echo "' + progress + '"\n';
+            s += '    echo "# Installing ' + app.name + ' (' + (i + 1) + '/' + keys.length + ')..."\n';
+            s += '    flatpak install -y flathub ' + app.flatpakId + ' 2>/dev/null\n';
+        }
+
+        s += '    \n';
+        s += '    echo "100"\n';
+        s += '    echo "# All done!"\n';
+        s += ') | zenity --progress \\\n';
+        s += '    --title="ItRunsOnLinux Pack Installer" \\\n';
+        s += '    --text="Starting installation..." \\\n';
+        s += '    --percentage=0 \\\n';
+        s += '    --auto-close \\\n';
+        s += '    --width=400 2>/dev/null\n\n';
+
+        // Success dialog
+        s += '# Step 4: Show success message\n';
+        s += 'zenity --info --title="Installation Complete" \\\n';
+        s += '    --text="All ' + appCount + ' application(s) have been installed successfully!\\n\\nYou can close this window." \\\n';
+        s += '    --width=350 2>/dev/null\n';
+
+        scriptOutput.textContent = s;
+    }
+
+    copyBtn.addEventListener('click', function() {
+        var text = scriptOutput.textContent;
+        if (text.indexOf('# Select apps') !== -1) return;
+        var blob = new Blob([text], { type: 'application/x-sh' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'itrunsonlinux-installer.sh';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Downloaded!';
+        setTimeout(function() { copyBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download'; }, 2000);
+    });
+</script>
+
+<style is:global>
+    .pack-info-banner {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background-color: rgba(16, 185, 129, 0.05);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        color: var(--text-color);
+        font-size: 0.9rem;
+    }
+    .pack-info-banner i { color: #10b981; }
+    .pack-steps {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+    .pack-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        flex: 1;
+        min-width: 200px;
+        padding: 0.75rem 1rem;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+    .pack-step-num {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: var(--accent-color);
+        color: white;
+        font-weight: 700;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+    }
+    .pack-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        align-items: start;
+    }
+    @media (max-width: 768px) {
+        .pack-layout { grid-template-columns: 1fr; }
+    }
+    .pack-search-input {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: var(--surface-color);
+        color: var(--text-color);
+        font-size: 0.9rem;
+        outline: none;
+    }
+    .pack-search-input:focus { border-color: var(--accent-color); }
+    .pack-suggestions {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: var(--card-shadow-hover);
+        z-index: 10;
+        max-height: 280px;
+        overflow-y: auto;
+    }
+    .pack-suggestion-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 0.85rem;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: background-color 0.1s ease;
+        font-size: 0.85rem;
+    }
+    .pack-suggestion-item:last-child { border-bottom: none; }
+    .pack-suggestion-item:hover { background-color: var(--surface-hover); }
+    .pack-suggestion-item.already-selected { opacity: 0.5; cursor: default; }
+    .suggestion-name { flex: 1; font-weight: 600; color: var(--text-color); }
+    .suggestion-cat { font-size: 0.7rem; color: var(--text-muted); }
+    .suggestion-check { color: #10b981; font-size: 0.75rem; }
+    .pack-app-list {
+        max-height: 450px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: var(--surface-color);
+    }
+    .pack-app-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: background-color 0.1s ease;
+        font-size: 0.85rem;
+    }
+    .pack-app-item:last-child { border-bottom: none; }
+    .pack-app-item:hover { background-color: var(--surface-hover); }
+    .pack-checkbox { accent-color: var(--accent-color); width: 1rem; height: 1rem; }
+    .pack-app-name { flex: 1; font-weight: 600; color: var(--text-color); }
+    .pack-app-cat { font-size: 0.7rem; color: var(--text-muted); }
+    .pack-output {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .pack-output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .pack-output-header h3 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .pack-distro-select {
+        padding: 0.4rem 0.6rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-size: 0.8rem;
+    }
+    .pack-script {
+        padding: 1.25rem;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 0.8rem;
+        line-height: 1.6;
+        color: var(--text-color);
+        white-space: pre-wrap;
+        word-break: break-all;
+        max-height: 450px;
+        overflow-y: auto;
+        margin: 0;
+    }
+</style>

@@ -70,6 +70,7 @@ const allApps = (await db.select().from(schema.apps).all()).map(app => ({
                 return;
             }
 
+            const seen = {};
             const filtered = apps.filter(app => {
                 const matchesQuery = app.name.toLowerCase().includes(query) || 
                                      app.description.toLowerCase().includes(query) ||
@@ -79,9 +80,14 @@ const allApps = (await db.select().from(schema.apps).all()).map(app => ({
 
                 const isNative = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native');
                 
-                if (activeFilter === 'native') return isNative;
-                if (activeFilter === 'webapp') return app.isWebApp;
-                if (activeFilter === 'wine') return !isNative && !app.isWebApp;
+                if (activeFilter === 'native' && !isNative) return false;
+                if (activeFilter === 'webapp' && !app.isWebApp) return false;
+                if (activeFilter === 'wine' && (isNative || app.isWebApp)) return false;
+
+                // Deduplicate by name
+                const key = app.name.toLowerCase().trim();
+                if (seen[key]) return false;
+                seen[key] = true;
                 return true;
             }).slice(0, 8);
 

@@ -1,0 +1,232 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../db/schema';
+import { env } from 'cloudflare:workers';
+import { desc, asc, sql } from 'drizzle-orm';
+import { isWebApp } from '../utils/webapp';
+import { getLanguage, useTranslations } from '../i18n';
+
+const db = drizzle(env.DB, { schema });
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
+
+const allApps = (await db.select()
+  .from(schema.apps)
+  .orderBy(desc(schema.apps.popularity), asc(schema.apps.name))
+  .all()).map((app, index) => ({
+    ...app,
+    isWebApp: isWebApp(app),
+    rank: index + 1
+  }));
+
+const nativeCount = allApps.filter(a => a.linuxAlternative?.toLowerCase().includes('native')).length;
+const webAppCount = allApps.filter(a => a.isWebApp).length;
+const wineCount = allApps.length - nativeCount - webAppCount;
+---
+
+<Layout title={lang === 'en' ? "Most Popular Software - ItRunsOnLinux" : "Software Más Popular - ItRunsOnLinux"}>
+    <Breadcrumb items={[
+      { label: t('breadcrumb.home'), href: '/' },
+      { label: lang === 'en' ? 'Most Popular' : 'Más Popular' }
+    ]} />
+
+    <div style="text-align: center; margin-bottom: 3rem; margin-top: 1rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; margin-bottom: 0.75rem;">
+            {lang === 'en' ? 'Most Popular Software' : 'Software Más Popular'}
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+            {lang === 'en' 
+              ? `Ranking of ${allApps.length} applications sorted by community votes.`
+              : `Ranking de ${allApps.length} aplicaciones ordenadas por votos de la comunidad.`}
+        </p>
+    </div>
+
+    <div class="stats-bar" style="margin-bottom: 2rem;">
+        <div class="stat-item">
+            <span class="stat-number">{nativeCount}</span>
+            <span class="stat-label"><i class="fa-brands fa-linux"></i> Native</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <span class="stat-number" style="color: #3b82f6;">{webAppCount}</span>
+            <span class="stat-label"><i class="fa-solid fa-cloud"></i> Web Apps</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <span class="stat-number" style="color: #f59e0b;">{wineCount}</span>
+            <span class="stat-label"><i class="fa-solid fa-wine-glass"></i> Wine/Proton</span>
+        </div>
+    </div>
+
+    <div id="popular-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        {allApps.slice(0, 50).map(app => {
+            const isNative = app.linuxAlternative?.toLowerCase().includes('native');
+            return (
+                <a href={`/app/${app.id}`} class="popular-item">
+                    <span class="popular-rank">#{app.rank}</span>
+                    <div class="popular-info">
+                        <span class="popular-name">
+                            {app.name}
+                            {isNative && <span class="badge-native"><i class="fa-brands fa-linux"></i></span>}
+                            {app.isWebApp && <span class="badge-webapp"><i class="fa-solid fa-cloud"></i></span>}
+                        </span>
+                        <span class="popular-category">{t(`cat.${app.category.toLowerCase()}` as any) || app.category}</span>
+                    </div>
+                    <div class="popular-votes">
+                        <span class="vote-icon">▲</span>
+                        <span class="vote-count">{app.popularity || 0}</span>
+                    </div>
+                </a>
+            );
+        })}
+    </div>
+
+    {allApps.length > 50 && (
+        <div style="text-align: center; margin-top: 2rem;">
+            <button id="load-more-btn" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-color) !important;">
+                {t('btn.seeMore')} ↓
+            </button>
+        </div>
+    )}
+</Layout>
+
+<style>
+    .stats-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        padding: 1.25rem 2rem;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .stat-number {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #10b981;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .stat-divider {
+        width: 1px;
+        height: 2rem;
+        background-color: var(--border-color);
+    }
+
+    .popular-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--text-color);
+        transition: all 0.15s ease;
+    }
+
+    .popular-item:hover {
+        border-color: var(--accent-color);
+        transform: translateX(4px);
+    }
+
+    .popular-rank {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        min-width: 35px;
+    }
+
+    .popular-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .popular-name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .popular-category {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .popular-votes {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.6rem;
+        background-color: var(--bg-color);
+        border-radius: 6px;
+    }
+
+    .vote-icon {
+        color: var(--accent-color);
+        font-size: 0.75rem;
+    }
+
+    .vote-count {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .badge-native {
+        color: #10b981;
+        font-size: 0.8em;
+    }
+
+    .badge-webapp {
+        color: #3b82f6;
+        font-size: 0.8em;
+    }
+</style>
+
+<script>
+    let visibleCount = 50;
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const allItems = document.querySelectorAll('.popular-item');
+    
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            const end = Math.min(visibleCount + 50, allItems.length);
+            for (let i = visibleCount; i < end; i++) {
+                (allItems[i] as HTMLElement).style.display = 'flex';
+            }
+            visibleCount = end;
+            if (visibleCount >= allItems.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        });
+    }
+</script>

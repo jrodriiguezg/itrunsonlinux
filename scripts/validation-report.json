@@ -1,0 +1,1078 @@
+{
+  "totalApps": 1502,
+  "totalReports": 106,
+  "issues": {
+    "missingAlternative": [],
+    "missingDescription": [],
+    "emptyDescription": [],
+    "missingHomepage": [
+      {
+        "id": "agilebits-1password-cli",
+        "name": "1Password CLI"
+      },
+      {
+        "id": "3dconnexion-3dxware-10",
+        "name": "3Dconnexion 3DxWare 10"
+      },
+      {
+        "id": "agfeo-agfeodashboard",
+        "name": "AGFEO Dashboard"
+      },
+      {
+        "id": "allen&heath-ahmsystemmanager",
+        "name": "AHM System Manager"
+      },
+      {
+        "id": "acfun-arliveforacfunlive",
+        "name": "ARLiveForAcfunLive"
+      },
+      {
+        "id": "antorg-inc-asciiengine",
+        "name": "ASCIIEngine"
+      },
+      {
+        "id": "avs-installpackcomplete",
+        "name": "AVS4YOU Programs Installation"
+      },
+      {
+        "id": "amazon-awsvpnclient",
+        "name": "AWS VPN Client"
+      },
+      {
+        "id": "abisource-abiword",
+        "name": "AbiWord"
+      },
+      {
+        "id": "ability-abilityoffice-10-professional",
+        "name": "Ability Office 10 Professional"
+      },
+      {
+        "id": "ability-abilityoffice-10-standard",
+        "name": "Ability Office 10 Standard"
+      },
+      {
+        "id": "ability-abilityoffice-8-professional",
+        "name": "Ability Office 8 Professional"
+      },
+      {
+        "id": "ability-abilityoffice-8-standard",
+        "name": "Ability Office 8 Standard"
+      },
+      {
+        "id": "acestream-acestream",
+        "name": "Ace Stream Media"
+      },
+      {
+        "id": "actifile-actifileagent",
+        "name": "Actifile Agent"
+      },
+      {
+        "id": "activestate-komodoedit",
+        "name": "ActiveState Komodo Edit"
+      },
+      {
+        "id": "admobilize-admobilize-desktopui",
+        "name": "AdMobilize Desktop UI"
+      },
+      {
+        "id": "admobilize-admobilize-visionservice",
+        "name": "AdMobilizeVisionService"
+      },
+      {
+        "id": "aether-aether",
+        "name": "Aether"
+      },
+      {
+        "id": "aderitoneto-afterlife",
+        "name": "AfterLife"
+      },
+      {
+        "id": "airtame-airtame",
+        "name": "Airtame"
+      },
+      {
+        "id": "airytec-switchoff",
+        "name": "Airytec Switch Off"
+      },
+      {
+        "id": "antimicrox-antimicroxportable",
+        "name": "AntiMicroX Portable"
+      },
+      {
+        "id": "anytxt-anytxtsearcher",
+        "name": "AnyTXT Searcher"
+      },
+      {
+        "id": "arduinosa-ide-beta",
+        "name": "Arduino IDE Beta"
+      },
+      {
+        "id": "asus-armourycrate",
+        "name": "ArmouryCrate"
+      },
+      {
+        "id": "atrix-atrixlauncher",
+        "name": "Artix Game Launcher"
+      },
+      {
+        "id": "ascension-ascensionlauncher",
+        "name": "Ascension Launcher"
+      },
+      {
+        "id": "assetizr-assetizr",
+        "name": "Assetizr"
+      },
+      {
+        "id": "astrocomma-astrogrep",
+        "name": "AstroGrep"
+      },
+      {
+        "id": "axcrypt-axcrypt",
+        "name": "AxCrypt"
+      },
+      {
+        "id": "bomist-bomist",
+        "name": "BOMIST"
+      },
+      {
+        "id": "byond-byond",
+        "name": "BYOND"
+      },
+      {
+        "id": "badlion-badlionclient",
+        "name": "Badlion Client"
+      },
+      {
+        "id": "belarc-advisor",
+        "name": "Belarc Advisor"
+      },
+      {
+        "id": "belgiangovernment-belgium-eidmiddleware",
+        "name": "Belgium e-ID middleware"
+      },
+      {
+        "id": "betterbird-betterbird",
+        "name": "Betterbird"
+      },
+      {
+        "id": "biscuit-biscuit",
+        "name": "Biscuit"
+      },
+      {
+        "id": "awehook-blinkmind",
+        "name": "BlinkMind"
+      },
+      {
+        "id": "box-boxtools",
+        "name": "Box Tools"
+      },
+      {
+        "id": "brave-brave-dev",
+        "name": "Brave Dev"
+      },
+      {
+        "id": "bitsum-coreprio",
+        "name": "Coreprio"
+      },
+      {
+        "id": "allen&heath-customcontroleditor",
+        "name": "Custom Control Editor"
+      },
+      {
+        "id": "aries-sciences-llc-ai-chess",
+        "name": "Dr. Henry's Chess Game"
+      },
+      {
+        "id": "aveeksaha-duskplayer",
+        "name": "DuskPlayer"
+      },
+      {
+        "id": "blueberry-flashbackpro",
+        "name": "FlashBack Pro 5"
+      },
+      {
+        "id": "ashishbharadwajj-flawesome",
+        "name": "Flawesome"
+      },
+      {
+        "id": "alexredden-g14controlv2",
+        "name": "G14ControlV2"
+      },
+      {
+        "id": "bluemarblegeographics-globalmapper",
+        "name": "Global Mapper"
+      },
+      {
+        "id": "arjun-g-google-meet-desktop",
+        "name": "Google Meet"
+      },
+      {
+        "id": "advancedfx-hlae",
+        "name": "HLAE"
+      },
+      {
+        "id": "apreltech-hvmanager",
+        "name": "HvManager"
+      },
+      {
+        "id": "atnsoft-keymanager",
+        "name": "Key Manager"
+      },
+      {
+        "id": "atnsoft-keyremapper",
+        "name": "Key Remapper"
+      },
+      {
+        "id": "belledonnecommunications-linphone",
+        "name": "Linphone"
+      },
+      {
+        "id": "bjlive!-luminearemote",
+        "name": "Luminea Remote"
+      },
+      {
+        "id": "admobilize-admobilize-malosvision",
+        "name": "Malos-Vision"
+      },
+      {
+        "id": "auraside-mantle",
+        "name": "Mantle"
+      },
+      {
+        "id": "amitmerchant1990-electron-markdownify",
+        "name": "Markdownify"
+      },
+      {
+        "id": "afractal-metronome",
+        "name": "Metronome"
+      },
+      {
+        "id": "allmapsoft-microsoftvirtualearthsatellite",
+        "name": "Microsoft Virtualearth Satellite Downloader"
+      },
+      {
+        "id": "barconv-mirrorop",
+        "name": "MirrorOp"
+      },
+      {
+        "id": "artisteerlimited-nicepage",
+        "name": "Nicepage"
+      },
+      {
+        "id": "amazon-nosqlworkbench",
+        "name": "NoSQL Workbench"
+      },
+      {
+        "id": "amazon-opensearch-odbc",
+        "name": "OpenSearch SQL ODBC Driver"
+      },
+      {
+        "id": "angusjohnson-pdftkbuilder",
+        "name": "PDFTK Builder"
+      },
+      {
+        "id": "benhollis-pnggauntlet",
+        "name": "PNGGauntlet"
+      },
+      {
+        "id": "bitsum-parkcontrol",
+        "name": "ParkControl"
+      },
+      {
+        "id": "ahlyab-passwordchecker",
+        "name": "Password Checker"
+      },
+      {
+        "id": "bosyun-pixso",
+        "name": "Pixso"
+      },
+      {
+        "id": "asiasoftonline-playparkdownloader",
+        "name": "Playpark Downloader"
+      },
+      {
+        "id": "apreltech-powermanager",
+        "name": "Power Manager"
+      },
+      {
+        "id": "alphayama-poweriast",
+        "name": "PowerIAST"
+      },
+      {
+        "id": "austinleath-r6rc",
+        "name": "R6RC"
+      },
+      {
+        "id": "amazon-sessionmanagerplugin",
+        "name": "Session Manager Plugin"
+      },
+      {
+        "id": "apreltech-silentinstallbuilder",
+        "name": "Silent Install Builder"
+      },
+      {
+        "id": "apreltech-silentinstallbuilder-beta",
+        "name": "Silent Install Builder Beta"
+      },
+      {
+        "id": "borisyakubchik-simplestfilerenamer",
+        "name": "Simplest File Renamer"
+      },
+      {
+        "id": "almico-speedfan",
+        "name": "SpeedFan"
+      },
+      {
+        "id": "ahkohd-switch",
+        "name": "Switch"
+      },
+      {
+        "id": "antonycourtney-tad",
+        "name": "Tad"
+      },
+      {
+        "id": "atnsoft-textpaster",
+        "name": "Text Paster"
+      },
+      {
+        "id": "aleab-toastify",
+        "name": "Toastify"
+      },
+      {
+        "id": "afractal-twittertron",
+        "name": "TwitterTron"
+      },
+      {
+        "id": "ahlyab-udemycouponfetcher",
+        "name": "Udemy Coupon Fetcher"
+      },
+      {
+        "id": "assnctr-unfx-proxy-checker",
+        "name": "Unfx Proxy Checker"
+      },
+      {
+        "id": "avosskuehler-viana",
+        "name": "Viana.NET"
+      },
+      {
+        "id": "bostrot-wslmanager",
+        "name": "WSL Manager"
+      },
+      {
+        "id": "andrewzhezherun-windjview",
+        "name": "WinDjView"
+      },
+      {
+        "id": "apachefriends-xampp-7-4",
+        "name": "XAMPP 7.4"
+      },
+      {
+        "id": "apachefriends-xampp-8-0",
+        "name": "XAMPP 8.0"
+      },
+      {
+        "id": "apachefriends-xampp-8-1",
+        "name": "XAMPP 8.1"
+      },
+      {
+        "id": "akeo-ie-zadig",
+        "name": "Zadig"
+      },
+      {
+        "id": "admobilize-admprovider",
+        "name": "admprovider"
+      },
+      {
+        "id": "aliceandbob-io-aliceandbob",
+        "name": "aliceandbob.io"
+      },
+      {
+        "id": "3ll3d00d-beqdesigner",
+        "name": "beqdesigner"
+      },
+      {
+        "id": "bonnefon-glogg",
+        "name": "glogg"
+      },
+      {
+        "id": "4gray-iptvnator",
+        "name": "iptvnator"
+      },
+      {
+        "id": "advice-myadvice-auftragsverwaltung",
+        "name": "myADVICE.Auftragsverwaltung"
+      },
+      {
+        "id": "bedrock-oss-regolith",
+        "name": "regolith"
+      },
+      {
+        "id": "alagrede-znote",
+        "name": "znote"
+      }
+    ],
+    "invalidFlathubId": [
+      {
+        "id": "arduino-ide",
+        "name": "Arduino IDE",
+        "flathubId": "cc.arduino.IDE2",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "arduinosa-ide-beta",
+        "name": "Arduino IDE Beta",
+        "flathubId": "cc.arduino.IDE2",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "arduinosa-ide-rc",
+        "name": "Arduino IDE RC",
+        "flathubId": "cc.arduino.IDE2",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "betterbird-betterbird",
+        "name": "Betterbird",
+        "flathubId": "eu.betterbird.Betterbird",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "bisq-bisq",
+        "name": "Bisq",
+        "flathubId": "network.bisq.Bisq",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "bluefish-bluefish",
+        "name": "Bluefish",
+        "flathubId": "nl.openoffice.bluefish",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "brunonova-collision",
+        "name": "Collision",
+        "flathubId": "eu.nokse.Collision",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "element-matrix-client",
+        "name": "Element (Matrix)",
+        "flathubId": "im.riot.Riot",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "ganttproject-scheduler",
+        "name": "GanttProject",
+        "flathubId": "biz.ganttproject.GanttProject",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "acaudwell-gource",
+        "name": "Gource",
+        "flathubId": "ca.gource.Gource",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "losslesscut",
+        "name": "LosslessCut",
+        "flathubId": "mifi.losslesscut",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "ocenaudio-editor",
+        "name": "Ocenaudio",
+        "flathubId": "br.com.ocenaudio.Ocenaudio",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "pidgin",
+        "name": "Pidgin",
+        "flathubId": "im.pidgin.Pidgin",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "safing-portmaster",
+        "name": "Portmaster (Safing)",
+        "flathubId": "cc.safing.portmaster",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "protonvpn",
+        "name": "ProtonVPN",
+        "flathubId": "ch.protonvpn.protonvpn",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "rocketchat-desktop-app",
+        "name": "Rocket.Chat",
+        "flathubId": "chat.rocket.RocketChat",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "rocketchat",
+        "name": "Rocket.Chat",
+        "flathubId": "chat.rocket.RocketChat",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "alexanderkojevnikov-spek",
+        "name": "Spek",
+        "flathubId": "cc.spek.Spek",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "stella-emu",
+        "name": "Stella",
+        "flathubId": "src.stella.Stella",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "tuxguitar-app",
+        "name": "TuxGuitar",
+        "flathubId": "ar.com.hernan.TuxGuitar",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "wavebox",
+        "name": "Wavebox",
+        "flathubId": "co.wavebox.Wavebox",
+        "reason": "Doesn't start with known prefix"
+      },
+      {
+        "id": "zoom-zoom",
+        "name": "Zoom Workplace",
+        "flathubId": "us.zoom.Zoom",
+        "reason": "Doesn't start with known prefix"
+      }
+    ],
+    "duplicateIds": [],
+    "shortDescription": [
+      {
+        "id": "demul",
+        "name": "DEMUl",
+        "desc": "Dreamcast emulator."
+      },
+      {
+        "id": "librecad",
+        "name": "LibreCAD",
+        "desc": "Open Source 2D CAD."
+      },
+      {
+        "id": "redream",
+        "name": "Redream",
+        "desc": "Dreamcast emulator."
+      }
+    ],
+    "missingCategory": [],
+    "genericDescription": [
+      {
+        "id": "iobit-advanced-systemcare",
+        "name": "Advanced SystemCare",
+        "desc": "All-in-one system optimizer, security guard, and registry repair tool."
+      },
+      {
+        "id": "botkind-allwaysync",
+        "name": "Allway Sync",
+        "desc": "Allway Sync is a program to sync data between all kinds of devices."
+      },
+      {
+        "id": "axure-axurerp-10",
+        "name": "Axure RP 10",
+        "desc": "All-in-one software design tool for creating prototypes, specifications and diagrams"
+      },
+      {
+        "id": "clickup",
+        "name": "ClickUp",
+        "desc": "All-in-one productivity platform for teams."
+      },
+      {
+        "id": "coda",
+        "name": "Coda",
+        "desc": "All-in-one doc for teams."
+      },
+      {
+        "id": "easeus-data-recovery",
+        "name": "EaseUS Data Recovery Wizard",
+        "desc": "All-in-one data recovery software to retrieve deleted files and formatted partitions."
+      },
+      {
+        "id": "easeus-partition-master",
+        "name": "EaseUS Partition Master",
+        "desc": "All-in-one partition manager and disk space analyzer."
+      },
+      {
+        "id": "fceux-emu",
+        "name": "FCEUX",
+        "desc": "All-in-one NES and Famicom Emulator with debugging support."
+      },
+      {
+        "id": "on1-photo-raw",
+        "name": "ON1 Photo RAW",
+        "desc": "All-in-one photo editing and management software."
+      },
+      {
+        "id": "corel-paintshoppro",
+        "name": "PaintShop Pro",
+        "desc": "All-in-one photo editing and vector design application by Corel."
+      }
+    ],
+    "suspiciousNames": []
+  },
+  "nameDuplicates": [
+    {
+      "name": "abiword",
+      "ids": [
+        "abisource-abiword",
+        "abiword"
+      ]
+    },
+    {
+      "name": "ableton live",
+      "ids": [
+        "ableton-live-suite",
+        "ableton-live"
+      ]
+    },
+    {
+      "name": "adobe audition",
+      "ids": [
+        "adobe-audition",
+        "audition"
+      ]
+    },
+    {
+      "name": "affinity designer",
+      "ids": [
+        "serif-affinitydesigner",
+        "affinity-designer"
+      ]
+    },
+    {
+      "name": "affinity photo",
+      "ids": [
+        "serif-affinityphoto",
+        "affinity-photo"
+      ]
+    },
+    {
+      "name": "affinity publisher",
+      "ids": [
+        "serif-affinitypublisher",
+        "affinity-publisher"
+      ]
+    },
+    {
+      "name": "amazon chime",
+      "ids": [
+        "amazon-chime",
+        "chime"
+      ]
+    },
+    {
+      "name": "angry ip scanner",
+      "ids": [
+        "angryziber-angryipscanner",
+        "angry-ip-scanner"
+      ]
+    },
+    {
+      "name": "anki",
+      "ids": [
+        "anki-anki",
+        "anki"
+      ]
+    },
+    {
+      "name": "asana",
+      "ids": [
+        "asana-asana",
+        "asana"
+      ]
+    },
+    {
+      "name": "beekeeper studio",
+      "ids": [
+        "beekeeper-studio-sql",
+        "beekeeper-studio"
+      ]
+    },
+    {
+      "name": "bluefish",
+      "ids": [
+        "bluefish-bluefish",
+        "bluefish"
+      ]
+    },
+    {
+      "name": "clion",
+      "ids": [
+        "jetbrains-clion",
+        "clion"
+      ]
+    },
+    {
+      "name": "capcut",
+      "ids": [
+        "capcut-desktop",
+        "capcut"
+      ]
+    },
+    {
+      "name": "citra",
+      "ids": [
+        "citra-emu",
+        "citra"
+      ]
+    },
+    {
+      "name": "datagrip",
+      "ids": [
+        "datagrip-db",
+        "datagrip"
+      ]
+    },
+    {
+      "name": "dropbox",
+      "ids": [
+        "dropbox-desktop",
+        "dropbox"
+      ]
+    },
+    {
+      "name": "element (matrix)",
+      "ids": [
+        "element-matrix-client",
+        "matrix-element"
+      ]
+    },
+    {
+      "name": "facebook messenger",
+      "ids": [
+        "facebook-messenger-desktop",
+        "facebook-messenger"
+      ]
+    },
+    {
+      "name": "flycast",
+      "ids": [
+        "flycast-emu",
+        "flycast"
+      ]
+    },
+    {
+      "name": "keepassxc",
+      "ids": [
+        "keepassxc",
+        "keypassxc"
+      ]
+    },
+    {
+      "name": "luminar neo",
+      "ids": [
+        "skylum-luminarneo",
+        "luminar-neo"
+      ]
+    },
+    {
+      "name": "mame",
+      "ids": [
+        "mame-emu",
+        "mame"
+      ]
+    },
+    {
+      "name": "malwarebytes",
+      "ids": [
+        "malwarebytes-antivirus",
+        "malwarebytes"
+      ]
+    },
+    {
+      "name": "mattermost",
+      "ids": [
+        "mattermost-desktop-app",
+        "mattermost"
+      ]
+    },
+    {
+      "name": "melonds",
+      "ids": [
+        "melonds-emu",
+        "melonDS"
+      ]
+    },
+    {
+      "name": "microsoft notepad",
+      "ids": [
+        "microsoft-notepad",
+        "notepad"
+      ]
+    },
+    {
+      "name": "microsoft onedrive",
+      "ids": [
+        "microsoft-onedrive",
+        "onedrive"
+      ]
+    },
+    {
+      "name": "microsoft paint",
+      "ids": [
+        "microsoft-paint",
+        "paint"
+      ]
+    },
+    {
+      "name": "microsoft phone link",
+      "ids": [
+        "microsoft-phone-link",
+        "your-phone"
+      ]
+    },
+    {
+      "name": "microsoft powertoys",
+      "ids": [
+        "microsoft-powertoys",
+        "powertoys"
+      ]
+    },
+    {
+      "name": "microsoft to do",
+      "ids": [
+        "microsoft-to-do-app",
+        "microsoft-to-do"
+      ]
+    },
+    {
+      "name": "mobaxterm",
+      "ids": [
+        "mobaxterm-client",
+        "mobaxterm"
+      ]
+    },
+    {
+      "name": "ocenaudio",
+      "ids": [
+        "ocenaudio-editor",
+        "ocenaudio"
+      ]
+    },
+    {
+      "name": "paintshop pro",
+      "ids": [
+        "corel-paintshoppro",
+        "paintshop-pro"
+      ]
+    },
+    {
+      "name": "parsec",
+      "ids": [
+        "parsec-gaming",
+        "parsec"
+      ]
+    },
+    {
+      "name": "pidgin",
+      "ids": [
+        "pidgin-im-client",
+        "pidgin"
+      ]
+    },
+    {
+      "name": "project64",
+      "ids": [
+        "project64-emu",
+        "project64"
+      ]
+    },
+    {
+      "name": "rclone",
+      "ids": [
+        "rclone-sync",
+        "rclone"
+      ]
+    },
+    {
+      "name": "redream",
+      "ids": [
+        "redream-emu",
+        "redream"
+      ]
+    },
+    {
+      "name": "rekordbox",
+      "ids": [
+        "rekordbox-dj",
+        "rekordbox"
+      ]
+    },
+    {
+      "name": "resilio sync",
+      "ids": [
+        "resilio-sync-app",
+        "resilio-sync"
+      ]
+    },
+    {
+      "name": "rocket.chat",
+      "ids": [
+        "rocketchat-desktop-app",
+        "rocketchat"
+      ]
+    },
+    {
+      "name": "smartgit",
+      "ids": [
+        "syntevo-smartgit",
+        "smartgit"
+      ]
+    },
+    {
+      "name": "snes9x",
+      "ids": [
+        "snes9x-emu",
+        "snes9x"
+      ]
+    },
+    {
+      "name": "sound forge",
+      "ids": [
+        "sound-forge-pro",
+        "sound-forge"
+      ]
+    },
+    {
+      "name": "sourcetree",
+      "ids": [
+        "sourcetree",
+        "atlassian-sourcetree"
+      ]
+    },
+    {
+      "name": "studio one",
+      "ids": [
+        "studio-one-daw",
+        "studio-one"
+      ]
+    },
+    {
+      "name": "tableplus",
+      "ids": [
+        "tableplus-db",
+        "tableplus"
+      ]
+    },
+    {
+      "name": "ticktick",
+      "ids": [
+        "appest-ticktick",
+        "ticktick"
+      ]
+    },
+    {
+      "name": "tower",
+      "ids": [
+        "tower-git",
+        "tower"
+      ]
+    },
+    {
+      "name": "veracrypt",
+      "ids": [
+        "veracrypt-disk-encryption",
+        "veracrypt"
+      ]
+    },
+    {
+      "name": "vita3k",
+      "ids": [
+        "vita3k-emu",
+        "vitadek"
+      ]
+    },
+    {
+      "name": "wechat",
+      "ids": [
+        "wechat-desktop-client",
+        "wechat"
+      ]
+    },
+    {
+      "name": "windows calculator",
+      "ids": [
+        "microsoft-calculator",
+        "calculator"
+      ]
+    },
+    {
+      "name": "windows defender",
+      "ids": [
+        "windows-defender-security",
+        "windows-defender"
+      ]
+    },
+    {
+      "name": "windows file explorer",
+      "ids": [
+        "windows-file-explorer",
+        "file-explorer"
+      ]
+    },
+    {
+      "name": "windows task manager",
+      "ids": [
+        "microsoft-taskmanager",
+        "task-manager"
+      ]
+    },
+    {
+      "name": "wireshark",
+      "ids": [
+        "wireshark-analyzer",
+        "wireshark"
+      ]
+    },
+    {
+      "name": "xenia",
+      "ids": [
+        "xenia-emu",
+        "xenia"
+      ]
+    },
+    {
+      "name": "zenmap",
+      "ids": [
+        "zenmap-nmap",
+        "zenmap"
+      ]
+    },
+    {
+      "name": "zulip",
+      "ids": [
+        "zulip-desktop-app",
+        "zulip"
+      ]
+    },
+    {
+      "name": "mgba",
+      "ids": [
+        "mgba-emu",
+        "mgba"
+      ]
+    },
+    {
+      "name": "mremoteng",
+      "ids": [
+        "mremoteng-client",
+        "mremoteng"
+      ]
+    },
+    {
+      "name": "pgadmin",
+      "ids": [
+        "pgadmin-postgresql",
+        "pgadmin"
+      ]
+    }
+  ]
+}
