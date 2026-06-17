@@ -30,6 +30,7 @@ db/
 
 # local database dumps and files
 db_local_dump.sql
+db_empty_batch.json
 *.db
 *.sqlite
 *.sqlite3

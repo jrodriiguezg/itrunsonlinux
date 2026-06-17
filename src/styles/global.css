@@ -301,3 +301,142 @@ header {
     padding: 1.5rem;
   }
 }
+
+/* App Detail Page Styles */
+.app-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.app-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* How to Install Section */
+.install-commands {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.install-command {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+}
+
+.install-command-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  min-width: 70px;
+  text-transform: uppercase;
+}
+
+.install-command-code {
+  flex: 1;
+  color: var(--text-color);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.install-command-copy {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.15s ease;
+}
+
+.install-command-copy:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* Similar Apps Grid */
+.similar-apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* Native Support Card */
+.native-card {
+  padding: 1.5rem;
+  border-left: 4px solid #10b981;
+}
+
+.webapp-card {
+  padding: 1.5rem;
+  border-left: 4px solid #3b82f6;
+  background-color: rgba(59, 130, 246, 0.03);
+}
+
+.compat-card {
+  padding: 1.5rem;
+  border-left: 4px solid var(--accent-color);
+}
+
+/* Alternative Card */
+.alternative-card {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 4px solid #10b981;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Search Results Improvements */
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.15s ease;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: var(--surface-hover);
+}
+
+/* Smooth transitions */
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

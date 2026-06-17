@@ -1,0 +1,66 @@
+---
+interface Props {
+  type: 'native' | 'webapp' | 'wine' | 'bottles' | 'garbage' | 'proton';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { type, size = 'md' } = Astro.props;
+
+const configs = {
+  native: { color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.3)', label: 'Native', icon: 'fa-brands fa-linux' },
+  webapp: { color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)', border: 'rgba(59, 130, 246, 0.3)', label: 'Web App', icon: 'fa-solid fa-cloud' },
+  wine: { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)', border: 'rgba(245, 158, 11, 0.3)', label: 'Wine', icon: 'fa-solid fa-wine-glass' },
+  bottles: { color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)', border: 'rgba(139, 92, 246, 0.3)', label: 'Bottles', icon: 'fa-solid fa-flask' },
+  garbage: { color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)', label: 'Doesnt Run', icon: 'fa-solid fa-xmark' },
+  proton: { color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)', border: 'rgba(6, 182, 212, 0.3)', label: 'Proton', icon: 'fa-solid fa-gamepad' },
+};
+
+const config = configs[type];
+const sizeClasses = {
+  sm: 'badge-sm',
+  md: 'badge-md',
+  lg: 'badge-lg',
+};
+---
+
+<span 
+  class={`compatibility-badge ${sizeClasses[size]}`}
+  style={`color: ${config.color}; background-color: ${config.bg}; border-color: ${config.border};`}
+>
+  <i class={config.icon}></i>
+  <span>{config.label}</span>
+</span>
+
+<style>
+  .compatibility-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 6px;
+    border: 1px solid;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-sm {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .badge-md {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .badge-lg {
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .badge-lg i {
+    font-size: 1.1em;
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '../../db/schema';
 import { eq } from 'drizzle-orm';
@@ -48,150 +49,16 @@ const nativeParts = app.linuxAlternative ? app.linuxAlternative.split('|') : [];
 const githubUrl = nativeParts.find((p: string) => p.startsWith('github:'))?.split('github:')[1];
 const storedFlathubId = nativeParts.find((p: string) => p.startsWith('flathub:'))?.split('flathub:')[1];
 
-const alternativeUrls: Record<string, string> = {
-  'gimp': 'https://www.gimp.org',
-  'krita': 'https://krita.org',
-  'inkscape': 'https://inkscape.org',
-  'scribus': 'https://www.scribus.net',
-  'davinci resolve': 'https://www.blackmagicdesign.com/products/davinciresolve',
-  'kdenlive': 'https://kdenlive.org',
-  'natron': 'https://natrongithub.github.io',
-  'blender': 'https://www.blender.org',
-  'darktable': 'https://www.darktable.org',
-  'rawtherapee': 'https://www.rawtherapee.com',
-  'freecad': 'https://www.freecad.org',
-  'bricscad': 'https://www.bricsys.com/en-intl/bricscad',
-  'onshape': 'https://www.onshape.com',
-  'libreoffice calc': 'https://www.libreoffice.org',
-  'onlyoffice': 'https://www.onlyoffice.com',
-  'libreoffice writer': 'https://www.libreoffice.org',
-  'libreoffice impress': 'https://www.libreoffice.org',
-  'libreoffice': 'https://www.libreoffice.org',
-  'thunderbird': 'https://www.thunderbird.net',
-  'evolution': 'https://wiki.gnome.org/Apps/Evolution',
-  'peazip': 'https://peazip.github.io',
-  'ark': 'https://apps.kde.org/ark',
-  'file roller': 'https://wiki.gnome.org/Apps/FileRoller',
-  'qbittorrent': 'https://www.qbittorrent.org',
-  'transmission': 'https://transmissionbt.com',
-  'rustdesk': 'https://rustdesk.com',
-  'anydesk': 'https://anydesk.com',
-  'notepadqq': 'https://notepadqq.com',
-  'vs code': 'https://code.visualstudio.com',
-  'vscodium': 'https://vscodium.com',
-  'pinta': 'https://www.pinta-project.com',
-  'bleachbit': 'https://www.bleachbit.org',
-  'ventoy': 'https://www.ventoy.net',
-  'balenaetcher': 'https://etcher.balena.io',
-  'cdemu': 'https://cdemu.sourceforge.io',
-  'obs studio': 'https://obsproject.com',
-  'simplescreenrecorder': 'https://www.maartenbaert.org/simplescreenrecorder',
-  'deadbeef': 'https://deadbeef.sourceforge.io',
-  'audacious': 'https://audacious-media-player.org',
-  'qmmp': 'https://qmmp.ylsoftware.com',
-  'bluefish': 'http://bluefish.openoffice.nl',
-  'lmms': 'https://lmms.io',
-  'bitwig studio': 'https://www.bitwig.com',
-  'reaper': 'https://www.reaper.fm',
-  'ardour': 'https://ardour.org',
-  'rhythmbox': 'https://wiki.gnome.org/Apps/Rhythmbox',
-  'strawberry': 'https://www.strawberrymusicplayer.org',
-  'filezilla': 'https://filezilla-project.org',
-  'krusader': 'https://krusader.org',
-  'native linux terminal': 'https://en.wikipedia.org/wiki/Terminal_emulator',
-  'heroic games launcher': 'https://heroicgameslauncher.com',
-  'lutris': 'https://lutris.net',
-  'zapzap': 'https://github.com/rtosta/zapzap',
-  'zap zap': 'https://github.com/rtosta/zapzap',
-  'whatsapp web': 'https://web.whatsapp.com',
-};
-
-const getAppStreamId = (name: string): string | undefined => {
-  const cleanKey = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const mapping: Record<string, string> = {
-    gimp: 'org.gimp.GIMP',
-    krita: 'org.kde.krita',
-    inkscape: 'org.inkscape.Inkscape',
-    scribus: 'net.scribus.Scribus',
-    zapzap: 'com.rtosta.zapzap',
-    davinciresolve: 'com.blackmagicdesign.resolve',
-    kdenlive: 'org.kde.kdenlive',
-    natron: 'fr.natron.Natron',
-    blender: 'org.blender.Blender',
-    darktable: 'org.darktable.Darktable',
-    rawtherapee: 'com.rawtherapee.RawTherapee',
-    freecad: 'org.freecadweb.FreeCAD',
-    bricscad: 'com.bricsys.BricsCAD',
-    libreofficecalc: 'org.libreoffice.LibreOffice',
-    onlyoffice: 'org.onlyoffice.desktopeditors',
-    libreofficewriter: 'org.libreoffice.LibreOffice',
-    libreofficeimpress: 'org.libreoffice.LibreOffice',
-    libreoffice: 'org.libreoffice.LibreOffice',
-    thunderbird: 'org.mozilla.Thunderbird',
-    evolution: 'org.gnome.Evolution',
-    peazip: 'io.github.peazip.PeaZip',
-    ark: 'org.kde.ark',
-    fileroller: 'org.gnome.FileRoller',
-    qbittorrent: 'org.qbittorrent.qBittorrent',
-    transmission: 'com.transmissionbt.Transmission',
-    rustdesk: 'com.rustdesk.RustDesk',
-    anydesk: 'com.anydesk.AnyDesk',
-    notepadqq: 'com.notepadqq.Notepadqq',
-    vscode: 'com.visualstudio.code',
-    vscodium: 'com.vscodium.codium',
-    pinta: 'com.github.PintaProject.Pinta',
-    bleachbit: 'org.bleachbit.BleachBit',
-    ventoy: 'io.github.ventoy.Ventoy',
-    balenaetcher: 'io.balena.etcher',
-    obsstudio: 'com.obsproject.Studio',
-    deadbeef: 'io.github.DeaDBeeF-Player.DeaDBeeF',
-    audacious: 'org.atheme.audacious',
-    qmmp: 'org.qmmp.Qmmp',
-    bluefish: 'org.bluefish.Bluefish',
-    lmms: 'io.lmms.LMMS',
-    bitwigstudio: 'com.bitwig.BitwigStudio',
-    reaper: 'fm.reaper.Reaper',
-    ardour: 'org.ardour.Ardour',
-    rhythmbox: 'org.gnome.Rhythmbox',
-    strawberry: 'org.strawberrymusicplayer.strawberry',
-    filezilla: 'org.filezilla.Filezilla',
-    krusader: 'org.kde.krusader',
-    heroicgameslauncher: 'com.heroicgameslauncher.hgl',
-    lutris: 'net.lutris.Lutris',
-    bottles: 'use.bottles.bottles',
-    discord: 'com.discordapp.Discord',
-    spotify: 'com.spotify.Client',
-    steam: 'com.valvesoftware.Steam',
-    vlc: 'org.videolan.VLC',
-    vlcmediaplayer: 'org.videolan.VLC',
-    skype: 'com.skype.Client',
-    zoom: 'us.zoom.Zoom',
-    zoomworkplace: 'us.zoom.Zoom',
-    googlechrome: 'com.google.Chrome',
-    teamviewer: 'com.teamviewer.TeamViewer',
-    kate: 'org.kde.kate',
-    gedit: 'org.gnome.gedit',
-    mousepad: 'org.xfce.mousepad',
-    kolourpaint: 'org.kde.kolourpaint',
-    drawing: 'com.github.maoschanz.drawing',
-    spectacle: 'org.kde.spectacle',
-    gnomescreenshot: 'org.gnome.Screenshot',
-    gnomesystemmonitor: 'org.gnome.SystemMonitor',
-    kcalc: 'org.kde.kcalc',
-    gnomecalculator: 'org.gnome.Calculator',
-    abiword: 'org.abisource.AbiWord',
-    drawio: 'com.jgraph.drawio.desktop',
-    dia: 'org.gnome.Dia',
-    dbeaver: 'io.dbeaver.DBeaverCommunity'
-  };
-  return mapping[cleanKey];
-};
+import { alternativeUrls } from '../../data/alternative-urls';
+import { getAppStreamId } from '../../data/appstream-ids';
 ---
 
 <Layout title={lang === 'en' ? `${app.name} on Linux - ItRunsOnLinux` : `${app.name} en Linux - ItRunsOnLinux`}>
-    <div style="margin-bottom: 2rem;">
-        <a href="/" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-decoration: none;">&larr; {t('nav.back')}</a>
-    </div>
+    <Breadcrumb items={[
+      { label: t('breadcrumb.home'), href: '/' },
+      { label: t(`cat.${app.category.toLowerCase()}` as any) || app.category, href: '/' },
+      { label: app.name }
+    ]} />
 
     <div class="flat-card" style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
@@ -242,6 +109,7 @@ const getAppStreamId = (name: string): string | undefined => {
     )}
 
     {isNative ? (
+        <>
         <div style="margin-bottom: 3rem;">
             <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
                 {t('app.support')}
@@ -270,11 +138,31 @@ const getAppStreamId = (name: string): string | undefined => {
                 </div>
             </div>
         </div>
+
+        {(storedFlathubId || getAppStreamId(app.name)) && (
+            <div style="margin-bottom: 3rem;">
+                <h2 class="section-title">{t('app.howToInstall')}</h2>
+                <div class="flat-card" style="padding: 1.5rem;">
+                    <div class="install-commands">
+                        {(storedFlathubId || getAppStreamId(app.name)) && (
+                            <div class="install-command">
+                                <span class="install-command-label">Flatpak</span>
+                                <code class="install-command-code">flatpak install flathub {storedFlathubId || getAppStreamId(app.name)}</code>
+                            </div>
+                        )}
+                        <div class="install-command">
+                            <span class="install-command-label">Snap</span>
+                            <code class="install-command-code">sudo snap install {app.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
+        </>
     ) : (
         <>
             <div style="margin-bottom: 3rem;">
-                <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
-                    {t('app.alternatives')}
+                <h2 class="section-title">{t('app.alternatives')}
                 </h2>
 
                 {alternativeNames.length === 0 ? (
@@ -316,8 +204,7 @@ const getAppStreamId = (name: string): string | undefined => {
             </div>
 
             <div style="margin-bottom: 3rem;">
-                <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 700;">
-                    {t('app.compatibility')}
+                <h2 class="section-title">{t('app.compatibility')}
                 </h2>
 
                 <div class="flat-card" style="padding: 1.5rem; border-left: 4px solid var(--accent-color);">
@@ -338,7 +225,7 @@ const getAppStreamId = (name: string): string | undefined => {
     )}
 
     <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
-        <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; font-weight: 700;">{t('app.comments')}</h2>
+        <h2 class="section-title" style="border-bottom: none; padding-bottom: 0;">{t('app.comments')}</h2>
         <script src="https://giscus.app/client.js"
             data-repo="jrodriiguezg/itrunsonlinux"
             data-repo-id="R_kgDOMN8B_Q"

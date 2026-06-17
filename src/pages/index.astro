@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SearchBar from '../components/SearchBar.astro';
+import StatsBar from '../components/StatsBar.astro';
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '../db/schema';
 import { env } from 'cloudflare:workers';
@@ -39,6 +40,8 @@ const webAppSvg = `<span class="webapp-badge-pill" style="display: inline-flex; 
             {t('hero.subtitle')}
         </p>
     </div>
+
+    <StatsBar />
 
     <SearchBar />
 

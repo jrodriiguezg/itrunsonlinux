@@ -1,0 +1,185 @@
+---
+import { getLanguage, useTranslations } from '../i18n';
+
+interface Props {
+  categories: { name: string; count: number }[];
+  activeCategory?: string;
+}
+
+const { categories, activeCategory = 'home' } = Astro.props;
+const lang = getLanguage(Astro.request, Astro.cookies);
+const t = useTranslations(lang);
+
+const categoryIcons: Record<string, string> = {
+  'home': 'fa-solid fa-house',
+  'all': 'fa-solid fa-grip',
+  'Design': 'fa-solid fa-palette',
+  'Office': 'fa-solid fa-briefcase',
+  'Games': 'fa-solid fa-gamepad',
+  'Social': 'fa-solid fa-users',
+  'Development': 'fa-solid fa-code',
+  'Audio': 'fa-solid fa-headphones',
+  'Utilities': 'fa-solid fa-wrench',
+  'Windows Integrated': 'fa-brands fa-windows',
+  'Engineering': 'fa-solid fa-drafting-compass',
+  'Security & Networking': 'fa-solid fa-shield-halved',
+  'Photo & Video': 'fa-solid fa-camera',
+  'Education & Finance': 'fa-solid fa-graduation-cap',
+};
+
+const getCategoryKey = (name: string): string => {
+  const map: Record<string, string> = {
+    'home': 'cat.home',
+    'all': 'cat.all',
+    'Design': 'cat.design',
+    'Office': 'cat.office',
+    'Games': 'cat.games',
+    'Social': 'cat.social',
+    'Development': 'cat.development',
+    'Audio': 'cat.audio',
+    'Utilities': 'cat.utilities',
+    'Windows Integrated': 'cat.winIntegrated',
+    'Engineering': 'cat.engineering',
+    'Security & Networking': 'cat.security',
+    'Photo & Video': 'cat.photography',
+    'Education & Finance': 'cat.education',
+  };
+  return map[name] || name;
+};
+---
+
+<aside class="category-sidebar">
+  <h3 class="sidebar-title">{t('cat.all')}</h3>
+  <ul class="sidebar-list">
+    {categories.map(cat => {
+      const dataCategory = cat.name === 'home' ? 'home' : cat.name === 'all' ? 'all' : cat.name;
+      return (
+        <li>
+          <button
+            class={`sidebar-item ${activeCategory === dataCategory ? 'active' : ''}`}
+            data-category={dataCategory}
+          >
+            <i class={categoryIcons[dataCategory] || 'fa-solid fa-folder'}></i>
+            <span class="sidebar-item-label">{t(getCategoryKey(dataCategory) as any) || cat.name}</span>
+            <span class="sidebar-item-count">{cat.count}</span>
+          </button>
+        </li>
+      );
+    })}
+  </ul>
+</aside>
+
+<style>
+  .category-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: var(--card-shadow);
+  }
+
+  .sidebar-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding: 0 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-align: left;
+  }
+
+  .sidebar-item:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-color);
+  }
+
+  .sidebar-item.active {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .sidebar-item i {
+    width: 1.25rem;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+
+  .sidebar-item-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-item-count {
+    font-size: 0.7rem;
+    background-color: var(--bg-color);
+    color: var(--text-muted);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .sidebar-item.active .sidebar-item-count {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  @media (max-width: 1024px) {
+    .category-sidebar {
+      width: 100%;
+      position: static;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-list {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .sidebar-item {
+      width: auto;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .sidebar-item-count {
+      display: none;
+    }
+  }
+</style>

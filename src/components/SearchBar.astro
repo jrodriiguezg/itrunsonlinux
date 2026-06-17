@@ -15,30 +15,26 @@ const allApps = (await db.select().from(schema.apps).all()).map(app => ({
 }));
 ---
 
-<div style="max-width: 600px; margin: 0 auto 3.5rem auto; position: relative;">
-    <input 
-        type="text" 
-        id="search-input" 
-        placeholder={t('search.placeholder')}
-        autocomplete="off"
-        style="width: 100%; padding: 1.1rem 1.4rem; font-size: 1.05rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--surface-color); color: var(--text-color); outline: none; transition: border-color 0.15s ease;"
-        onfocus="this.style.borderColor='var(--text-color)'"
-        onblur="this.style.borderColor='var(--border-color)'"
-    />
-    
-    <!-- Search Filter Pills -->
-    <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: center; flex-wrap: wrap;">
-        <button type="button" class="search-pill active" data-filter="all"> {lang === 'en' ? 'All' : 'Todo'}</button>
-        <button type="button" class="search-pill" data-filter="native"> {lang === 'en' ? 'Native' : 'Nativo'}</button>
-        <button type="button" class="search-pill" data-filter="webapp"> Web Apps</button>
-        <button type="button" class="search-pill" data-filter="wine"> Wine / Proton</button>
+<div class="search-container">
+    <div class="search-input-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input 
+            type="text" 
+            id="search-input" 
+            placeholder={t('search.placeholder')}
+            autocomplete="off"
+            class="search-input"
+        />
     </div>
     
-    <div 
-        id="search-results" 
-        style="display: none; position: absolute; top: calc(100% + 0.5rem); left: 0; right: 0; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--card-shadow-hover); z-index: 10; max-height: 350px; overflow-y: auto;"
-    >
+    <div class="search-pills">
+        <button type="button" class="search-pill active" data-filter="all">{lang === 'en' ? 'All' : 'Todo'}</button>
+        <button type="button" class="search-pill" data-filter="native"><i class="fa-brands fa-linux"></i> {lang === 'en' ? 'Native' : 'Nativo'}</button>
+        <button type="button" class="search-pill" data-filter="webapp"><i class="fa-solid fa-cloud"></i> Web Apps</button>
+        <button type="button" class="search-pill" data-filter="wine">Wine / Proton</button>
     </div>
+    
+    <div id="search-results" class="search-results"></div>
 </div>
 
 <script define:vars={{ 
@@ -51,86 +47,85 @@ const allApps = (await db.select().from(schema.apps).all()).map(app => ({
     const resultsContainer = document.getElementById('search-results');
     const pills = document.querySelectorAll('.search-pill');
     let activeFilter = 'all';
+    let debounceTimer = null;
 
     pills.forEach(pill => {
         pill.addEventListener('click', () => {
             pills.forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
             activeFilter = pill.getAttribute('data-filter') || 'all';
-            
-            // Re-trigger search logic
             const event = new Event('input', { bubbles: true });
             searchInput.dispatchEvent(event);
         });
     });
 
     searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        
-        if (query.length < 2) {
-            resultsContainer.style.display = 'none';
-            return;
-        }
-
-        const filtered = apps.filter(app => {
-            const matchesQuery = app.name.toLowerCase().includes(query) || 
-                                 app.description.toLowerCase().includes(query) ||
-                                 (app.alternativeTo && app.alternativeTo.toLowerCase().includes(query));
-            if (!matchesQuery) return false;
-
-            const isNative = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native');
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const query = e.target.value.toLowerCase().trim();
             
-            if (activeFilter === 'native') {
-                return isNative;
-            } else if (activeFilter === 'webapp') {
-                return app.isWebApp;
-            } else if (activeFilter === 'wine') {
-                return !isNative && !app.isWebApp;
+            if (query.length < 2) {
+                resultsContainer.style.display = 'none';
+                resultsContainer.innerHTML = '';
+                return;
             }
-            return true;
-        }).slice(0, 5);
 
-        resultsContainer.innerHTML = '';
-        
-        if (filtered.length > 0) {
-            filtered.forEach(app => {
-                const a = document.createElement('a');
-                a.href = `/app/${app.id}`;
-                a.style.cssText = 'display: block; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--border-color); color: var(--text-color); text-decoration: none; transition: background-color 0.15s ease;';
-                a.onmouseover = () => a.style.backgroundColor = 'var(--surface-hover)';
-                a.onmouseout = () => a.style.backgroundColor = 'transparent';
-                
-                let alternativeText = '';
-                if (app.alternativeTo && app.alternativeTo.toLowerCase().includes(query) && !app.name.toLowerCase().includes(query)) {
-                    alternativeText = `<span style="font-size: 0.7rem; background-color: var(--bg-color); color: #10b981; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.5rem; border: 1px solid rgba(16, 185, 129, 0.2); font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase;">${tAlternativeText}</span>`;
-                }
-                
+            const filtered = apps.filter(app => {
+                const matchesQuery = app.name.toLowerCase().includes(query) || 
+                                     app.description.toLowerCase().includes(query) ||
+                                     (app.alternativeTo && app.alternativeTo.toLowerCase().includes(query)) ||
+                                     app.category.toLowerCase().includes(query);
+                if (!matchesQuery) return false;
+
                 const isNative = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native');
-                const nativeTag = isNative ? `<span style="font-size: 0.65rem; background-color: var(--bg-color); color: #10b981; padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 700; margin-left: 0.5rem; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;"><i class="fa-brands fa-linux"></i> Native</span>` : '';
-                const webAppTag = app.isWebApp ? `<span style="font-size: 0.65rem; background-color: var(--bg-color); color: #3b82f6; padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.2); font-weight: 700; margin-left: 0.5rem; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;"><i class="fa-solid fa-cloud"></i> Web App</span>` : '';
                 
-                a.innerHTML = `
-                    <div style="font-weight: 700; margin-bottom: 0.25rem; display: flex; align-items: center; font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem;">
-                        ${app.name}
-                        ${alternativeText}
-                        ${nativeTag}
-                        ${webAppTag}
-                    </div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">${app.category}</div>
-                `;
-                resultsContainer.appendChild(a);
-            });
-            resultsContainer.style.display = 'block';
-        } else {
-            const div = document.createElement('div');
-            div.style.cssText = 'padding: 1.5rem; color: var(--text-muted); text-align: center; font-size: 0.95rem;';
-            div.innerHTML = `${tNoResults}<br><br><a href="https://github.com/jrodriiguezg/itrunsonlinux/issues/new" target="_blank" class="btn" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.8rem;">${tRequestToAdd}</a>`;
-            resultsContainer.appendChild(div);
-            resultsContainer.style.display = 'block';
-        }
+                if (activeFilter === 'native') return isNative;
+                if (activeFilter === 'webapp') return app.isWebApp;
+                if (activeFilter === 'wine') return !isNative && !app.isWebApp;
+                return true;
+            }).slice(0, 8);
+
+            resultsContainer.innerHTML = '';
+            
+            if (filtered.length > 0) {
+                filtered.forEach(app => {
+                    const a = document.createElement('a');
+                    a.href = `/app/${app.id}`;
+                    a.className = 'search-result-item';
+                    
+                    let tags = '';
+                    const isNative = app.linuxAlternative && app.linuxAlternative.toLowerCase().includes('native');
+                    
+                    if (app.alternativeTo && app.alternativeTo.toLowerCase().includes(query) && !app.name.toLowerCase().includes(query)) {
+                        tags += `<span class="search-tag tag-alternative">${tAlternativeText}</span>`;
+                    }
+                    if (isNative) {
+                        tags += `<span class="search-tag tag-native"><i class="fa-brands fa-linux"></i> Native</span>`;
+                    }
+                    if (app.isWebApp) {
+                        tags += `<span class="search-tag tag-webapp"><i class="fa-solid fa-cloud"></i> Web App</span>`;
+                    }
+                    
+                    a.innerHTML = `
+                        <div class="search-result-content">
+                            <div class="search-result-name">${app.name}${tags}</div>
+                            <div class="search-result-category">${app.category}</div>
+                        </div>
+                        <div class="search-result-arrow">&rarr;</div>
+                    `;
+                    resultsContainer.appendChild(a);
+                });
+                resultsContainer.style.display = 'block';
+            } else {
+                const div = document.createElement('div');
+                div.className = 'search-no-results';
+                div.innerHTML = `${tNoResults}<br><br><a href="https://github.com/jrodriiguezg/itrunsonlinux/issues/new" target="_blank" class="btn" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.8rem;">${tRequestToAdd}</a>`;
+                resultsContainer.appendChild(div);
+                resultsContainer.style.display = 'block';
+            }
+        }, 150);
     });
 
-    // Close results when clicking outside
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
             resultsContainer.style.display = 'none';
@@ -139,17 +134,70 @@ const allApps = (await db.select().from(schema.apps).all()).map(app => ({
 </script>
 
 <style>
+    .search-container {
+        max-width: 600px;
+        margin: 0 auto 3rem auto;
+        position: relative;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1.1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 1rem 1.4rem 1rem 3rem;
+        font-size: 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        background-color: var(--surface-color);
+        color: var(--text-color);
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    .search-input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-input::placeholder {
+        color: var(--text-muted);
+    }
+
+    .search-pills {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
     .search-pill {
         background-color: var(--surface-color);
         border: 1px solid var(--border-color);
         color: var(--text-muted);
         padding: 0.4rem 0.9rem;
-        border-radius: 8px;
+        border-radius: 20px;
         font-size: 0.8rem;
         font-family: 'Space Grotesk', sans-serif;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
     }
 
     .search-pill:hover {
@@ -158,8 +206,108 @@ const allApps = (await db.select().from(schema.apps).all()).map(app => ({
     }
 
     .search-pill.active {
-        background-color: var(--text-color);
-        border-color: var(--text-color);
-        color: var(--bg-color);
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: #ffffff;
+    }
+
+    .search-results {
+        display: none;
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        right: 0;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: var(--card-shadow-hover);
+        z-index: 10;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .search-result-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-color);
+        text-decoration: none;
+        transition: background-color 0.15s ease;
+    }
+
+    .search-result-item:last-child {
+        border-bottom: none;
+    }
+
+    .search-result-item:hover {
+        background-color: var(--surface-hover);
+    }
+
+    .search-result-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .search-result-name {
+        font-weight: 700;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .search-result-category {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .search-result-arrow {
+        color: var(--accent-color);
+        font-size: 0.9rem;
+        margin-left: 1rem;
+        flex-shrink: 0;
+    }
+
+    .search-tag {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+    }
+
+    .tag-alternative {
+        background-color: var(--bg-color);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .tag-native {
+        background-color: var(--bg-color);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .tag-webapp {
+        background-color: var(--bg-color);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .search-no-results {
+        padding: 1.5rem;
+        color: var(--text-muted);
+        text-align: center;
+        font-size: 0.95rem;
     }
 </style>
